@@ -1,8 +1,9 @@
 <template>
   <div class="navbar-item is-size-4 is-family-monospace">Recipes</div>
+  <SearchBar v-model="recipeName" />
   <div class="fixed-grid has-3-cols">
     <div class="grid is-gap-5">
-      <div v-for="recipe in recipes" :key="recipe.name" class="cell">
+      <div v-for="recipe in filteredRecipesByName" :key="recipe.name" class="cell">
         <div class="card">
           <Recipe :recipe="recipe" />
         </div>
@@ -13,6 +14,7 @@
 
 <script>
 import Recipe from "@/components/recipes/Recipe.vue";
+import SearchBar from "@/components/SearchBar.vue";
 const recipesConst = [
   {
     id: 1,
@@ -78,11 +80,22 @@ const recipesConst = [
 export default {
   components: {
     Recipe,
+    SearchBar,
   },
   data() {
     return {
-      recipes: recipesConst
+      recipes: recipesConst,
+      recipeName: "",
     };
+  },
+  computed: {
+    filteredRecipesByName() {
+      return this.recipes.filter((r) => {
+        return (
+          r.name.toLowerCase().indexOf(this.recipeName.toLowerCase()) != -1
+        );
+      });
+    },
   },
 };
 </script>
