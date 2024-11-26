@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     selectCategoryName(categoryName) {
-      this.active = categoryName;
+      this.active = this.active === categoryName ? '' : categoryName;
       this.$emit("selectCategoryName", categoryName);
     },
   },
