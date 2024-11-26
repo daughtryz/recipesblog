@@ -4,7 +4,8 @@
       <li
         v-for="category in categories"
         :key="category.name"
-        @click="$emit('selectCategoryName', category.name)"
+        :class="{ 'is-active': category.name === active }"
+        @click="selectCategoryName(category.name)"
       >
         <a>
           <span class="icon">
@@ -60,7 +61,14 @@ export default {
   data() {
     return {
       categories,
+      active: "",
     };
-  }
+  },
+  methods: {
+    selectCategoryName(categoryName) {
+      this.active = categoryName;
+      this.$emit("selectCategoryName", categoryName);
+    },
+  },
 };
 </script>
