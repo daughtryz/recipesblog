@@ -31,9 +31,17 @@
         <div class="columns">
           <div class="content column">
             <h2>Ingredients</h2>
-            <ul class="is-medium" v-for="ingredient of recipe.ingredients">
+            <div class="fixed-grid has-1-cols">
+              <div v-for="ingredient of recipe.ingredients" class="cell mb-3">
+                <span>
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <em>{{ ingredient }}</em>
+              </div>
+            </div>
+            <!-- <ul class="is-medium" v-for="ingredient of recipe.ingredients">
               <li>{{ ingredient }}</li>
-            </ul>
+            </ul> -->
           </div>
           <div class="content column">
             <h2>Directions</h2>
@@ -80,6 +88,6 @@ export default {
 </script>
 <style scoped>
 .enable-line-break {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
 </style>
