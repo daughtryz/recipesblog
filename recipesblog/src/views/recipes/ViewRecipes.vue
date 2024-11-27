@@ -1,7 +1,14 @@
 <template>
   <div class="navbar-item is-size-4 is-family-monospace">Recipes</div>
   <CategoryTabs v-on:select-category-name="onSelectCategoryNameHandler" />
-  <SearchBar v-model="recipeName" />
+  <div class="grid">
+    <div class="cell">
+      <SearchBar v-model="recipeName" />
+    </div>
+    <div class="cell">
+      <AddRecipeButton />
+    </div>
+  </div>
   <div class="fixed-grid has-3-cols">
     <div class="grid is-gap-5">
       <div
@@ -19,93 +26,36 @@
 
 <script>
 import CategoryTabs from "@/components/categories/CategoryTabs.vue";
+import AddRecipeButton from "@/components/recipes/AddRecipeButton.vue";
 import Recipe from "@/components/recipes/Recipe.vue";
 import SearchBar from "@/components/SearchBar.vue";
-const recipesConst = [
-  {
-    id: 1,
-    name: "Musaka",
-    servings: 2,
-    hours: 2,
-    minutes: 20,
-    categoryName: "Main course",
-    likes: 40,
-    ingredients: ["butter", "suggar"],
-    directions: ["first direction", "second direction"],
-    notes: "Test note",
-    image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
-  },
-  {
-    id: 2,
-    name: "Kavarma",
-    servings: 3,
-    hours: 4,
-    minutes: 50,
-    categoryName: "Main course",
-    likes: 20,
-    ingredients: ["butter", "suggar"],
-    directions: ["first direction", "second direction"],
-    notes: "Test note2",
-    image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
-  },
-  {
-    id: 3,
-    name: "Blister",
-    servings: 4,
-    hours: 4,
-    minutes: 50,
-    categoryName: "Desserts",
-    ingredients: ["butter", "suggar"],
-    directions: ["first direction", "second direction"],
-    notes: "Test note2",
-    likes: 5,
-    image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
-  },
-  {
-    id: 4,
-    name: "Blister2",
-    servings: 5,
-    hours: 4,
-    minutes: 50,
-    categoryName: "Desserts",
-    ingredients: ["butter", "suggar", "oat"],
-    directions: ["first direction", "second direction"],
-    notes: "Test note2",
-    likes: 100,
-    image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
-  },
-  {
-    id: 4,
-    name: "Blister3",
-    servings: 5,
-    hours: 4,
-    minutes: 50,
-    categoryName: "Desserts",
-    ingredients: ["butter", "suggar", "oat"],
-    directions: ["first direction", "second direction"],
-    notes: "Test note2",
-    likes: 100,
-    image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
-  },
-];
+import { useRecipeStore } from "@/stores/storeRecipe";
 export default {
   components: {
     Recipe,
     SearchBar,
     CategoryTabs,
+    AddRecipeButton,
+  },
+  setup() {
+    const recipeStore = useRecipeStore();
+
+    return { recipeStore };
   },
   data() {
     return {
-      recipes: recipesConst,
+      recipes: [],
       recipeName: "",
       selectedCategoryName: "",
     };
   },
   methods: {
     onSelectCategoryNameHandler(selectedCategoryName) {
-      console.log("Handler", selectedCategoryName);
       this.selectedCategoryName = selectedCategoryName;
     },
+  },
+  created() {
+    this.recipes = this.recipeStore.getRecipes();
   },
   computed: {
     filteredRecipesByName() {
