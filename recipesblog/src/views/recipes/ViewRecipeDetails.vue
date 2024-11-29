@@ -59,8 +59,7 @@
       </div>
     </div>
     <footer class="card-footer">
-      <a href="#" class="card-footer-item">Save</a>
-      <a href="#" class="card-footer-item">Edit</a>
+      <EditRecipeButtonRouter :recipe-id="recipe.id" />
       <a href="#" class="card-footer-item">Delete</a>
     </footer>
   </div>
@@ -68,8 +67,12 @@
 
 <script>
 import { useRecipeStore } from "@/stores/storeRecipe";
+import EditRecipeButtonRouter from "@/components/recipes/EditRecipeButtonRouter.vue";
 
 export default {
+  components: {
+    EditRecipeButtonRouter,
+  },
   setup() {
     const recipeStore = useRecipeStore();
     return { recipeStore };
@@ -79,6 +82,7 @@ export default {
       recipe: {},
     };
   },
+  methods: {},
   created() {
     const recipeId = this.$route.params.id;
     this.recipe = this.recipeStore.getRecipeById(recipeId);

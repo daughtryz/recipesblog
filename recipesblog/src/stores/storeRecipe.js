@@ -81,5 +81,17 @@ export const useRecipeStore = defineStore("recipe", {
     addRecipe(recipe) {
       this.recipes.push(recipe);
     },
+    editRecipe(recipeToEdit) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeToEdit.id);
+      currentRecipe.name = recipeToEdit.name;
+      currentRecipe.servings = recipeToEdit.servings;
+      currentRecipe.hours = recipeToEdit.hours;
+      currentRecipe.minutes = recipeToEdit.minutes;
+      currentRecipe.categoryName = recipeToEdit.categoryName;
+      currentRecipe.ingredients = recipeToEdit.ingredients;
+      currentRecipe.directions = recipeToEdit.directions;
+      currentRecipe.notes = recipeToEdit.notes;
+      currentRecipe.image = recipeToEdit.image;
+    }
   },
 });

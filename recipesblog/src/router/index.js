@@ -10,14 +10,24 @@ const router = createRouter({
       component: () => import("../views/recipes/ViewRecipes.vue"),
     },
     {
-      path: "/recipes/details/:id",
-      name: "recipeDetails",
-      component: () => import("../views/recipes/ViewRecipeDetails.vue"),
-    },
-    {
-      path: "/recipes/add",
-      name: "addRecipe",
-      component: () => import("../views/recipes/ViewAddRecipe.vue"),
+      path: "/recipes",
+      children: [
+        {
+          path: "details/:id",
+          name: "recipeDetails",
+          component: () => import("../views/recipes/ViewRecipeDetails.vue"),
+        },
+        {
+          path: "edit/:id",
+          name: "editRecipe",
+          component: () => import("../views/recipes/ViewEditRecipe.vue"),
+        },
+        {
+          path: "add",
+          name: "addRecipe",
+          component: () => import("../views/recipes/ViewAddRecipe.vue"),
+        }
+      ],
     },
     {
       path: "/about",
