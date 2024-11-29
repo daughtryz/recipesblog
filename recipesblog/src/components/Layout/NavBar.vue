@@ -45,11 +45,14 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <a class="button is-primary">
+          <a @click.prevent="routeToRegisterPage" class="button is-primary">
             <strong>Sign up</strong>
           </a>
-          <a class="button is-light">
+          <a @click.prevent="routeToLoginPage" class="button is-light">
             Log in
+          </a>
+          <a class="button is-light">
+            Log out
           </a>
         </div>
       </div>
@@ -64,6 +67,14 @@ export default {
         return {
 
         }
+    },
+    methods: {
+      routeToRegisterPage() {
+        this.$router.push('/auth/register')
+      },
+      routeToLoginPage() {
+        this.$router.push('/auth/login')
+      }
     }
 }
 </script>

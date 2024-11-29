@@ -26,6 +26,19 @@ const router = createRouter({
           path: "add",
           name: "addRecipe",
           component: () => import("../views/recipes/ViewAddRecipe.vue"),
+        },
+      ],
+    },
+    {
+      path: "/auth",
+      children: [
+        {
+          path: "register",
+          component: () => import("../views/auth/ViewRegister.vue"),
+        },
+        {
+          path: "login",
+          component: () => import("../views/auth/ViewLogin.vue"),
         }
       ],
     },
