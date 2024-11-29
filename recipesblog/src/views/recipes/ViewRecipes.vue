@@ -26,7 +26,7 @@
 
 <script>
 import CategoryTabs from "@/components/categories/CategoryTabs.vue";
-import AddRecipeButton from "@/components/recipes/AddRecipeButton.vue";
+import AddRecipeButton from "@/components/recipes/AddRecipeButtonRouter.vue";
 import Recipe from "@/components/recipes/Recipe.vue";
 import SearchBar from "@/components/SearchBar.vue";
 import { useRecipeStore } from "@/stores/storeRecipe";

@@ -64,7 +64,8 @@
               <div
                 class="input-errors"
                 v-for="error of v$.selectedCategory.$errors"
-                :key="error.$uid">
+                :key="error.$uid"
+              >
                 <div class="error-msg">{{ error.$message }}</div>
               </div>
             </div>
@@ -120,18 +121,11 @@
       </label>
     </div>
 
-    <div class="field is-horizontal">
-      <div class="field-label">
-        <!-- Left empty for spacing -->
-      </div>
-      <div class="field-body">
-        <div class="field">
-          <div class="control">
-            <button type="submit" class="button is-primary">Add recipe</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <AddEditRecipeButton>
+      <template #buttons>
+        <button type="submit" class="button is-primary">Add recipe</button>
+      </template>
+    </AddEditRecipeButton>
   </form>
 </template>
 
@@ -141,6 +135,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useVuelidate } from "@vuelidate/core";
 import { required, between, minValue } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
+import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
 
 const categories = [
   "Salads",
@@ -154,6 +149,7 @@ const categories = [
 export default {
   components: {
     RecipeInputField,
+    AddEditRecipeButton,
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -202,8 +198,8 @@ export default {
         hours: this.hours,
         minutes: this.minutes,
         category: this.selectedCategory,
-        ingredients: this.ingredients.split(",").map(i => i.trim()),
-        directions: this.directions.split(",").map(i => i.trim()),
+        ingredients: this.ingredients.split(",").map((i) => i.trim()),
+        directions: this.directions.split(",").map((i) => i.trim()),
         notes: this.notes,
         image: this.image,
         likes: 0,
