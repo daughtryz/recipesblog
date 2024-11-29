@@ -11,7 +11,7 @@
       </section>
       <footer class="modal-card-foot is-justify-content-flex-end">
         <div class="buttons">
-          <button class="button is-danger" @click="deleteRecipe(recipeId)">
+          <button class="button is-danger" @click="deleteRecipe">
             Delete
           </button>
           <button class="button" @click="closeModal">Cancel</button>
@@ -24,6 +24,7 @@
 <script setup>
 import { useRecipeStore } from "@/stores/storeRecipe";
 import { useRouter } from "vue-router";
+
 const router = useRouter();
 const props = defineProps({
   modelValue: {
@@ -35,12 +36,13 @@ const props = defineProps({
   },
 });
 const recipeStore = useRecipeStore();
-const deleteRecipe = (recipeId) => {
-  recipeStore.deleteRecipe(recipeId);
+const deleteRecipe = () => {
+  recipeStore.deleteRecipe(props.recipeId);
   router.push({ path: "/" });
 };
 const emits = defineEmits(["update:modelValue"]);
 const closeModal = () => {
   emits("update:modelValue", false);
 };
+
 </script>
