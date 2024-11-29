@@ -60,18 +60,21 @@
     </div>
     <footer class="card-footer">
       <EditRecipeButtonRouter :recipe-id="recipe.id" />
-      <a href="#" class="card-footer-item">Delete</a>
+      <a @click.prevent="deleteRecipe = true" href="#" class="card-footer-item">Delete</a>
     </footer>
+    <ModalDeleteRecipe v-if="deleteRecipe" v-model="deleteRecipe" :recipe-id="recipe.id" />
   </div>
 </template>
 
 <script>
 import { useRecipeStore } from "@/stores/storeRecipe";
 import EditRecipeButtonRouter from "@/components/recipes/EditRecipeButtonRouter.vue";
+import ModalDeleteRecipe from "@/components/recipes/ModalDeleteRecipe.vue";
 
 export default {
   components: {
     EditRecipeButtonRouter,
+    ModalDeleteRecipe
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -80,6 +83,7 @@ export default {
   data() {
     return {
       recipe: {},
+      deleteRecipe: false
     };
   },
   methods: {},

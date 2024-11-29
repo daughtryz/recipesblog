@@ -92,6 +92,10 @@ export const useRecipeStore = defineStore("recipe", {
       currentRecipe.directions = recipeToEdit.directions;
       currentRecipe.notes = recipeToEdit.notes;
       currentRecipe.image = recipeToEdit.image;
+    },
+    deleteRecipe(recipeId) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
+      this.recipes.shift(currentRecipe)
     }
   },
 });
