@@ -39,9 +39,6 @@
                 <em>{{ ingredient }}</em>
               </div>
             </div>
-            <!-- <ul class="is-medium" v-for="ingredient of recipe.ingredients">
-              <li>{{ ingredient }}</li>
-            </ul> -->
           </div>
           <div class="content column">
             <h2>Directions</h2>
@@ -90,7 +87,6 @@ export default {
   created() {
     const recipeId = this.$route.params.id;
     this.recipe = this.recipeStore.getRecipeById(recipeId);
-    console.log(this.recipe);
   },
 };
 </script>

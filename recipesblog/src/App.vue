@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import { RouterLink, RouterView } from 'vue-router'
 import NavBar from './components/Layout/NavBar.vue';
 export default {
   components: {
