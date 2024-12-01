@@ -1,4 +1,16 @@
 import { defineStore } from "pinia";
+import { db } from "@/js/firebase.js";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  updateDoc,
+  query,
+  orderBy,
+  addDoc,
+  getDocs,
+} from "firebase/firestore";
 
 const recipesConst = [
   {
@@ -67,21 +79,43 @@ const recipesConst = [
     image: "https://www.supichka.com/files/images/1242/musaka_2.jpg",
   },
 ];
-export const useRecipeStore = defineStore("recipe", {
+let recipesCollectionRef;
+let getRecipesSnapshot = null;
+export const useRecipeStore = defineStore("recipeStore", {
   state: () => ({
-    recipes: recipesConst,
+    recipes: [],
   }),
   actions: {
-    getRecipes() {
-      return this.recipes;
+    async getRecipes() {
+      getRecipesSnapshot = onSnapshot(recipesCollectionRef, (querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let recipe = {
+            id: doc.id,
+            name: doc.data().name,
+            servings: doc.data().servings,
+            hours: doc.data().hours,
+            minutes: doc.data().minutes,
+            categoryName: doc.data().categoryName,
+            ingredients: doc.data().ingredients,
+            directions: doc.data().directions,
+            notes: doc.data().notes,
+            likes: doc.data().likes,
+            image: doc.data().image,
+          };
+          this.recipes.push(recipe);
+        });
+      });
     },
     getRecipeById(recipeId) {
       return this.recipes.find((x) => x.id == recipeId);
     },
-    addRecipe(recipe) {
-      this.recipes.push(recipe);
+    async addRecipe(recipe) {
+      var currentDate = new Date().getTime();
+      let createdAt = currentDate.toString();
+      recipe.createdAt = createdAt;
+      await addDoc(recipesCollectionRef, recipe);
     },
-    editRecipe(recipeToEdit) {
+    async editRecipe(recipeToEdit) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeToEdit.id);
       currentRecipe.name = recipeToEdit.name;
       currentRecipe.servings = recipeToEdit.servings;
@@ -92,10 +126,16 @@ export const useRecipeStore = defineStore("recipe", {
       currentRecipe.directions = recipeToEdit.directions;
       currentRecipe.notes = recipeToEdit.notes;
       currentRecipe.image = recipeToEdit.image;
+
+      await updateDoc(doc(db, 'recipes', recipeToEdit.id), currentRecipe);
     },
     deleteRecipe(recipeId) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeId);
-      this.recipes.shift(currentRecipe)
-    }
+      this.recipes.shift(currentRecipe);
+    },
+    async init() {
+      recipesCollectionRef = collection(db, "recipes");
+      await this.getRecipes();
+    },
   },
 });

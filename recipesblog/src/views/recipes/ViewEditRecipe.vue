@@ -166,8 +166,8 @@ export default {
         hours: 0,
         minutes: 0,
         categoryName: "",
-        ingredients: "",
-        directions: "",
+        ingredients: [],
+        directions: [],
         notes: "",
         image: "",
       },
@@ -192,8 +192,19 @@ export default {
       if (!(await this.v$.$validate())) {
         return;
       }
+      const ingredients = this.recipeToEdit.ingredients
+        .split(",")
+        .map((i) => i.trim());
 
-      this.recipeStore.editRecipe(this.recipeToEdit);
+      console.log(ingredients)
+      // const directions = this.recipeToEdit.directions
+      //   .split(",")
+      //   .map((i) => i.trim());
+
+      // this.recipeToEdit.ingredients = ingredients;
+      // this.recipeToEdit.directions = directions;
+
+      await this.recipeStore.editRecipe(this.recipeToEdit);
       this.$router.push("/");
     },
   },

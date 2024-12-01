@@ -205,7 +205,7 @@ export default {
         likes: 0,
       };
 
-      this.recipeStore.addRecipe(recipe);
+      await this.recipeStore.addRecipe(recipe);
       this.$router.push("/");
     },
   },

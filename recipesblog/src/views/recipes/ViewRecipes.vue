@@ -54,8 +54,8 @@ export default {
       this.selectedCategoryName = selectedCategoryName;
     },
   },
-  created() {
-    this.recipes = this.recipeStore.getRecipes();
+  async created() {
+    this.recipes = this.recipeStore.recipes;
   },
   computed: {
     filteredRecipesByName() {

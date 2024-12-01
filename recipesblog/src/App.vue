@@ -6,14 +6,23 @@
 </template>
 
 <script>
-import NavBar from './components/Layout/NavBar.vue';
+import NavBar from "./components/Layout/NavBar.vue";
+import { useRecipeStore } from "./stores/storeRecipe";
 export default {
   components: {
-    NavBar
-  }
-}
+    NavBar,
+  },
+  setup() {
+    const storeRecipe = useRecipeStore();
+
+    return { storeRecipe };
+  },
+  async created() {
+    await this.storeRecipe.init();
+  },
+};
 </script>
 
 <style>
-@import 'bulma/css/bulma.min.css';
+@import "bulma/css/bulma.min.css";
 </style>
