@@ -22,7 +22,7 @@ export const useUserStore = defineStore("userStore", {
         } else {
           // User is signed out
           this.user = {};
-          this.router.push({ nam: "registerPage" });
+          this.router.push({ name: "loginPage" });
         }
       });
     },
@@ -53,7 +53,9 @@ export const useUserStore = defineStore("userStore", {
     },
     logout() {
       signOut(auth)
-        .then(() => {})
+        .then(() => {
+
+        })
         .catch((error) => {
           console.log(error.message);
         });
