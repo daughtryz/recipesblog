@@ -6,7 +6,6 @@
         <a class="navbar-item"><b>Statistics</b></a>
       </div>
       
-
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
