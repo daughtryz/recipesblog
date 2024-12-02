@@ -78,19 +78,61 @@
       type="text"
       :errors="v$.ingredients.$errors"
       label-name="Ingredients"
-      v-model="ingredients"
+      v-model="currentIngredient"
       label-normalized="ingredients"
       placeholder-name="Enter ingredients e.g. butter, milk"
-    />
+    >
+      <template #ingredient>
+        <div class="columns">
+          <div class="content column">
+            <div class="fixed-grid has-1-cols">
+              <div v-for="ingredient of ingredients" class="cell mb-3">
+                <span>
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <em>{{ ingredient }}</em>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          @click.prevent="addIngredient"
+          class="button is-primary is-small is-responsive"
+        >
+          Add ingredient
+        </button>
+      </template>
+    </RecipeInputField>
 
     <RecipeInputField
       type="text"
       :errors="v$.directions.$errors"
       label-name="Directions"
-      v-model="directions"
+      v-model="currentDirection"
       label-normalized="directions"
       placeholder-name="Enter directions e.g. prepare sauce pan, use hot water"
-    />
+    >
+      <template #direction>
+        <div class="columns">
+          <div class="content column">
+            <div class="fixed-grid has-1-cols">
+              <div v-for="direction of directions" class="cell mb-3">
+                <span>
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <em>{{ direction }}</em>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          @click.prevent="addDirection"
+          class="button is-primary is-small is-responsive"
+        >
+          Add direction
+        </button>
+      </template>
+    </RecipeInputField>
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
@@ -133,9 +175,19 @@
 import { useRecipeStore } from "@/stores/storeRecipe";
 import { v4 as uuidv4 } from "uuid";
 import { useVuelidate } from "@vuelidate/core";
-import { required, between, minValue } from "@vuelidate/validators";
+import { required, between, minValue, helpers } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
 import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
+
+const isIngredientsNotEmpty = helpers.withMessage(
+  "Ingredients must have at least one value",
+  (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
+);
+
+const isDirectionsNotEmpty = helpers.withMessage(
+  "Directions must have at least one value",
+  (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
+);
 
 const categories = [
   "Salads",
@@ -167,8 +219,10 @@ export default {
       hours: 0,
       minutes: 0,
       selectedCategory: "",
-      ingredients: "",
-      directions: "",
+      ingredients: [],
+      currentIngredient: "",
+      directions: [],
+      currentDirection: "",
       notes: "",
       image: "",
     };
@@ -180,8 +234,8 @@ export default {
       hours: { required, betweenValue: between(1, 60) },
       minutes: { required, betweenValue: between(1, 60) },
       selectedCategory: { required },
-      ingredients: { required },
-      directions: { required },
+      ingredients: { isIngredientsNotEmpty },
+      directions: { isDirectionsNotEmpty },
       image: { required },
     };
   },
@@ -198,15 +252,23 @@ export default {
         hours: this.hours,
         minutes: this.minutes,
         category: this.selectedCategory,
-        ingredients: this.ingredients.split(",").map((i) => i.trim()),
-        directions: this.directions.split(",").map((i) => i.trim()),
+        ingredients: this.ingredients,
+        directions: this.directions,
         notes: this.notes,
         image: this.image,
         likes: 0,
       };
-
+      
       await this.recipeStore.addRecipe(recipe);
       this.$router.push("/");
+    },
+    addIngredient() {
+      this.ingredients.push(this.currentIngredient);
+      this.currentIngredient = "";
+    },
+    addDirection() {
+      this.directions.push(this.currentDirection);
+      this.currentDirection = "";
     },
   },
 };

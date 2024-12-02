@@ -79,14 +79,14 @@ export default {
   },
   data() {
     return {
+      recipeId: this.$route.params.id,
       recipe: {},
       deleteRecipe: false
     };
   },
   methods: {},
   created() {
-    const recipeId = this.$route.params.id;
-    this.recipe = this.recipeStore.getRecipeById(recipeId);
+    this.recipe = this.recipeStore.getRecipeById(this.recipeId);
   },
 };
 </script>

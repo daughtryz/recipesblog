@@ -53,9 +53,9 @@
         <div class="field is-narrow">
           <div class="control">
             <div class="select is-fullwidth">
-              <select v-model="recipeToEdit.categoryName">
+              <select v-model="recipeToEdit.category">
                 <option selected disabled hidden value="">
-                  Choose a category
+                  Choose category
                 </option>
                 <option v-for="category in categories">
                   {{ category }}
@@ -63,7 +63,7 @@
               </select>
               <div
                 class="input-errors"
-                v-for="error of v$.recipeToEdit.categoryName.$errors"
+                v-for="error of v$.recipeToEdit.category.$errors"
                 :key="error.$uid"
               >
                 <div class="error-msg">{{ error.$message }}</div>
@@ -78,19 +78,64 @@
       type="text"
       :errors="v$.recipeToEdit.ingredients.$errors"
       label-name="Ingredients"
-      v-model="recipeToEdit.ingredients"
+      v-model="recipeToEdit.currentIngredient"
       label-normalized="ingredients"
       placeholder-name="Enter ingredients e.g. butter, milk"
-    />
+    >
+      <template #ingredient>
+        <div class="columns">
+          <div class="content column">
+            <div class="fixed-grid has-1-cols">
+              <div
+                v-for="ingredient of recipeToEdit.ingredients"
+                class="cell mb-3"
+              >
+                <span>
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <em>{{ ingredient }}</em>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          @click.prevent="addIngredient"
+          class="button is-primary is-small is-responsive"
+        >
+          Add ingredient
+        </button>
+      </template>
+    </RecipeInputField>
 
     <RecipeInputField
       type="text"
       :errors="v$.recipeToEdit.directions.$errors"
       label-name="Directions"
-      v-model="recipeToEdit.directions"
+      v-model="recipeToEdit.currentDirection"
       label-normalized="directions"
       placeholder-name="Enter directions e.g. prepare sauce pan, use hot water"
-    />
+    >
+      <template #direction>
+        <div class="columns">
+          <div class="content column">
+            <div class="fixed-grid has-1-cols">
+              <div v-for="direction of recipeToEdit.directions" class="cell mb-3">
+                <span>
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <em>{{ direction }}</em>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          @click.prevent="addDirection"
+          class="button is-primary is-small is-responsive"
+        >
+          Add direction
+        </button>
+      </template>
+    </RecipeInputField>
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
@@ -132,9 +177,19 @@
 <script>
 import { useRecipeStore } from "@/stores/storeRecipe";
 import { useVuelidate } from "@vuelidate/core";
-import { required, between, minValue } from "@vuelidate/validators";
+import { required, between, minValue, helpers } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
 import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
+
+const isIngredientsNotEmpty = helpers.withMessage(
+  "Ingredients must have at least one value",
+  (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
+);
+
+const isDirectionsNotEmpty = helpers.withMessage(
+  "Directions must have at least one value",
+  (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
+);
 
 const categories = [
   "Salads",
@@ -160,14 +215,17 @@ export default {
   data() {
     return {
       categories,
+      isEditMode: false,
       recipeToEdit: {
         name: "",
         servings: 0,
         hours: 0,
         minutes: 0,
-        categoryName: "",
+        category: "",
         ingredients: [],
+        currentIngredient: "",
         directions: [],
+        currentDirection: "",
         notes: "",
         image: "",
       },
@@ -180,9 +238,9 @@ export default {
         servings: { required, minValueValue: minValue(1) },
         hours: { required, betweenValue: between(1, 60) },
         minutes: { required, betweenValue: between(1, 60) },
-        categoryName: { required },
-        ingredients: { required },
-        directions: { required },
+        category: { required },
+        ingredients: { isIngredientsNotEmpty },
+        directions: { isDirectionsNotEmpty },
         image: { required },
       },
     };
@@ -192,20 +250,17 @@ export default {
       if (!(await this.v$.$validate())) {
         return;
       }
-      const ingredients = this.recipeToEdit.ingredients
-        .split(",")
-        .map((i) => i.trim());
-
-      console.log(ingredients)
-      // const directions = this.recipeToEdit.directions
-      //   .split(",")
-      //   .map((i) => i.trim());
-
-      // this.recipeToEdit.ingredients = ingredients;
-      // this.recipeToEdit.directions = directions;
 
       await this.recipeStore.editRecipe(this.recipeToEdit);
       this.$router.push("/");
+    },
+    addIngredient() {
+      this.recipeToEdit.ingredients.push(this.recipeToEdit.currentIngredient);
+      this.recipeToEdit.currentIngredient = "";
+    },
+    addDirection() {
+      this.recipeToEdit.directions.push(this.recipeToEdit.currentDirection);
+      this.recipeToEdit.currentDirection = "";
     },
   },
   created() {

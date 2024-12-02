@@ -10,6 +10,7 @@ import {
   orderBy,
   addDoc,
   getDocs,
+  setDoc,
 } from "firebase/firestore";
 
 const recipesConst = [
@@ -87,7 +88,8 @@ export const useRecipeStore = defineStore("recipeStore", {
   }),
   actions: {
     async getRecipes() {
-      getRecipesSnapshot = onSnapshot(recipesCollectionRef, (querySnapshot) => {
+      const unsubscribe = onSnapshot(recipesCollectionRef, (querySnapshot) => {
+        let currentRecipes = [];
         querySnapshot.forEach((doc) => {
           let recipe = {
             id: doc.id,
@@ -95,15 +97,16 @@ export const useRecipeStore = defineStore("recipeStore", {
             servings: doc.data().servings,
             hours: doc.data().hours,
             minutes: doc.data().minutes,
-            categoryName: doc.data().categoryName,
+            category: doc.data().category,
             ingredients: doc.data().ingredients,
             directions: doc.data().directions,
             notes: doc.data().notes,
             likes: doc.data().likes,
             image: doc.data().image,
           };
-          this.recipes.push(recipe);
+          currentRecipes.push(recipe);
         });
+        this.recipes = currentRecipes;
       });
     },
     getRecipeById(recipeId) {
@@ -113,7 +116,8 @@ export const useRecipeStore = defineStore("recipeStore", {
       var currentDate = new Date().getTime();
       let createdAt = currentDate.toString();
       recipe.createdAt = createdAt;
-      await addDoc(recipesCollectionRef, recipe);
+
+      await setDoc(collection(recipesCollectionRef, recipe.id), recipe);
     },
     async editRecipe(recipeToEdit) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeToEdit.id);
@@ -121,17 +125,16 @@ export const useRecipeStore = defineStore("recipeStore", {
       currentRecipe.servings = recipeToEdit.servings;
       currentRecipe.hours = recipeToEdit.hours;
       currentRecipe.minutes = recipeToEdit.minutes;
-      currentRecipe.categoryName = recipeToEdit.categoryName;
+      currentRecipe.category = recipeToEdit.category;
       currentRecipe.ingredients = recipeToEdit.ingredients;
       currentRecipe.directions = recipeToEdit.directions;
       currentRecipe.notes = recipeToEdit.notes;
       currentRecipe.image = recipeToEdit.image;
 
-      await updateDoc(doc(db, 'recipes', recipeToEdit.id), currentRecipe);
+      await updateDoc(doc(recipesCollectionRef, recipeToEdit.id), currentRecipe);
     },
-    deleteRecipe(recipeId) {
-      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
-      this.recipes.shift(currentRecipe);
+    async deleteRecipe(recipeId) {
+      await deleteDoc(doc(recipesCollectionRef, recipeId));
     },
     async init() {
       recipesCollectionRef = collection(db, "recipes");

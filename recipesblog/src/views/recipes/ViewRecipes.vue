@@ -54,12 +54,9 @@ export default {
       this.selectedCategoryName = selectedCategoryName;
     },
   },
-  async created() {
-    this.recipes = this.recipeStore.recipes;
-  },
   computed: {
     filteredRecipesByName() {
-      return this.recipes.filter((recipe) => {
+      return this.recipeStore.recipes.filter((recipe) => {
         const matchesName = recipe.name
           .toLowerCase()
           .includes(this.recipeName.toLowerCase());
@@ -70,7 +67,7 @@ export default {
 
         const matchesCategory =
           this.selectedCategoryName === "" ||
-          recipe.categoryName === this.selectedCategoryName;
+          recipe.category === this.selectedCategoryName;
 
         return matchesName && matchesCategory;
       });

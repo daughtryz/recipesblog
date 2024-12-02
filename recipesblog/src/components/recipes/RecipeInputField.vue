@@ -15,6 +15,8 @@
         <div class="input-errors" v-for="error of errors" :key="error.$uid">
           <div class="error-msg">{{ error.$message }}</div>
         </div>
+        <slot name="ingredient" />
+        <slot name="direction" />
       </div>
     </div>
   </div>
