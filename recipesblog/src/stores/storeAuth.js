@@ -1,4 +1,11 @@
 import { defineStore } from "pinia";
+import {
+  createUserWithEmailAndPassword,
+  signOut,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { auth } from "@/js/firebase";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -6,13 +13,18 @@ export const useUserStore = defineStore("userStore", {
   }),
   actions: {
     registerUser(credentials) {
-        this.user = {
-            emai: credentials.email,
-            password: credentials.password
-        }
+      createUserWithEmailAndPassword(
+        auth,
+        credentials.email,
+        credentials.password
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+        })
+        .catch((error) => {
+          console.log("Error.message: ", error.message);
+        });
     },
-    loginUser() {
-
-    }
+    loginUser() {},
   },
 });

@@ -34,10 +34,12 @@ const router = createRouter({
       children: [
         {
           path: "register",
+          name: "registerPage",
           component: () => import("../views/auth/ViewRegister.vue"),
         },
         {
           path: "login",
+          name: "loginPage",
           component: () => import("../views/auth/ViewLogin.vue"),
         }
       ],

@@ -12,12 +12,13 @@
                     type="email"
                     v-model="email"
                     placeholder="e.g. bobsmith@gmail.com"
+                    @blur="v$.email.$touch"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-envelope"></i>
                   </span>
+                  <ErrorMessages :errors="v$.email.$errors" />
                 </div>
               </div>
               <div class="field">
@@ -27,12 +28,13 @@
                     type="text"
                     v-model="username"
                     placeholder="e.g. bobsmith"
+                    @blur="v$.username.$touch"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-user"></i>
                   </span>
+                  <ErrorMessages :errors="v$.username.$errors" />
                 </div>
               </div>
               <div class="field">
@@ -42,12 +44,13 @@
                     type="password"
                     v-model="password"
                     placeholder="*******"
+                    @blur="v$.password.$touch"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-lock"></i>
                   </span>
+                  <ErrorMessages :errors="v$.password.$errors" />
                 </div>
               </div>
               <div class="field">
@@ -55,24 +58,20 @@
                 <div class="control has-icons-left">
                   <input
                     type="password"
-                    v-model="confirmPasword"
+                    v-model="confirmPassword"
                     placeholder="*******"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-lock"></i>
                   </span>
+                  <ErrorMessages :errors="v$.confirmPassword.$errors" />
                 </div>
               </div>
               <div class="field">
-                <label for="" class="checkbox">
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-              </div>
-              <div class="field">
-                <button type="submit" class="button is-success">Register</button>
+                <button type="submit" class="button is-success">
+                  Register
+                </button>
               </div>
             </form>
           </div>
@@ -84,30 +83,72 @@
 
 <script>
 import { useUserStore } from "@/stores/storeAuth";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  between,
+  minValue,
+  helpers,
+  minLength,
+  sameAs,
+  email,
+  alphaNum,
+  maxLength,
+} from "@vuelidate/validators";
+import ErrorMessages from "@/components/ErrorMessages.vue";
 
 export default {
+  components: {
+    ErrorMessages,
+  },
   setup() {
     const userStore = useUserStore();
-
-    return { userStore };
+    return { userStore, v$: useVuelidate() };
   },
   data() {
     return {
       username: "",
       email: "",
       password: "",
-      confirmPasword: "",
+      confirmPassword: "",
+    };
+  },
+  validations() {
+    return {
+      username: {
+        required: helpers.withMessage("Username is required", required),
+      },
+      email: {
+        required: helpers.withMessage("Email is required", required),
+        email,
+      },
+      password: {
+        required: helpers.withMessage("Password is required", required),
+        minLength: minLength(6),
+        maxLength: maxLength(15),
+        alphaNum,
+      },
+      confirmPassword: {
+        sameAsPassword: helpers.withMessage(
+          "Password and confirm password do not match",
+          sameAs(this.password)
+        ),
+      },
     };
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
+      if (!(await this.v$.$validate())) {
+        return;
+      }
       const credentials = {
         email: this.email,
         username: this.username,
         password: this.password,
       };
-      console.log(credentials)
+      console.log(credentials);
       this.userStore.registerUser(credentials);
+      this.$router.push({ name: "loginPage" });
     },
   },
 };

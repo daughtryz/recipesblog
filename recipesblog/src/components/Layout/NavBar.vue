@@ -70,10 +70,10 @@ export default {
     },
     methods: {
       routeToRegisterPage() {
-        this.$router.push('/auth/register')
+        this.$router.push('auth/register')
       },
       routeToLoginPage() {
-        this.$router.push('/auth/login')
+        this.$router.push('auth/login')
       }
     }
 }
