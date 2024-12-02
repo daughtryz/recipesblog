@@ -12,6 +12,20 @@ export const useUserStore = defineStore("userStore", {
     user: {},
   }),
   actions: {
+    init() {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in
+          this.user.id = user.uid;
+          this.user.email = user.email;
+          this.router.push("/");
+        } else {
+          // User is signed out
+          this.user = {};
+          this.router.push({ nam: "registerPage" });
+        }
+      });
+    },
     registerUser(credentials) {
       createUserWithEmailAndPassword(
         auth,
@@ -25,6 +39,24 @@ export const useUserStore = defineStore("userStore", {
           console.log("Error.message: ", error.message);
         });
     },
-    loginUser() {},
+    loginUser(credentials) {
+      console.log("In the store login");
+      signInWithEmailAndPassword(auth, credentials.email, credentials.password)
+        .then((userCredential) => {
+          console.log("Successfully signed in");
+          const user = userCredential.user;
+          // ...
+        })
+        .catch((error) => {
+          console.log("Error message: ", error.message);
+        });
+    },
+    logout() {
+      signOut(auth)
+        .then(() => {})
+        .catch((error) => {
+          console.log(error.message);
+        });
+    },
   },
 });

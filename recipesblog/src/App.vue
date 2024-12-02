@@ -7,6 +7,7 @@
 
 <script>
 import NavBar from "./components/Layout/NavBar.vue";
+import { useUserStore } from "./stores/storeAuth";
 import { useRecipeStore } from "./stores/storeRecipe";
 export default {
   components: {
@@ -14,11 +15,12 @@ export default {
   },
   setup() {
     const storeRecipe = useRecipeStore();
-
-    return { storeRecipe };
+    const storeAuth = useUserStore();
+    return { storeRecipe, storeAuth };
   },
   async created() {
     await this.storeRecipe.init();
+    this.storeAuth.init();
   },
 };
 </script>

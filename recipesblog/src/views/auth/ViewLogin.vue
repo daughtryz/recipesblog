@@ -12,12 +12,13 @@
                     type="email"
                     v-model="email"
                     placeholder="e.g. bobsmith@gmail.com"
+                    @blur="v$.email.$touch"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-envelope"></i>
                   </span>
+                  <ErrorMessages :errors="v$.email.$errors" />
                 </div>
               </div>
               <div class="field">
@@ -26,13 +27,14 @@
                   <input
                     type="password"
                     v-model="password"
+                    @blur="v$.password.$touch"
                     placeholder="*******"
                     class="input"
-                    required
                   />
                   <span class="icon is-small is-left">
                     <i class="fa fa-lock"></i>
                   </span>
+                  <ErrorMessages :errors="v$.password.$errors" />
                 </div>
               </div>
               <div class="field">
@@ -53,26 +55,57 @@
 </template>
 <script>
 import { useUserStore } from "@/stores/storeAuth";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  helpers,
+  minLength,
+  email,
+  alphaNum,
+  maxLength,
+} from "@vuelidate/validators";
+import ErrorMessages from "@/components/ErrorMessages.vue";
 
 export default {
+  components: {
+    ErrorMessages,
+  },
   setup() {
     const userStore = useUserStore();
 
-    return { userStore };
+    return { userStore, v$: useVuelidate() };
   },
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+    };
+  },
+  validations() {
+    return {
+      email: {
+        required: helpers.withMessage("Email is required", required),
+        email,
+      },
+      password: {
+        required: helpers.withMessage("Password is required", required),
+        minLength: minLength(6),
+        maxLength: maxLength(15),
+        alphaNum,
+      },
     };
   },
   methods: {
-    onSubmit() {
+    async onSubmit() {
+      if (!(await this.v$.$validate())) {
+        return;
+      }
+
       const credentials = {
         email: this.email,
         password: this.password,
       };
-      console.log(credentials)
+
       this.userStore.loginUser(credentials);
     },
   },
