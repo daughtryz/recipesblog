@@ -261,6 +261,7 @@ export default {
         image: this.image,
         user_id: this.userStore.user.id,
         likes: 0,
+        likedBy: []
       };
 
       await this.recipeStore.addRecipe(recipe);
