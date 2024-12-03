@@ -55,11 +55,31 @@
         {{ recipe.notes }}
       </div>
     </div>
+    <div class="ml-3 mt-4 columns is-8">
+      <div class="column is-2">
+        <span @click="likeRecipe(recipeId)">
+          <Transition mode="out-in">
+            <i v-if="hasUserLiked" class="fa-solid fa-thumbs-up fa-2xl"></i>
+            <i v-else class="fa-regular fa-thumbs-up fa-2xl"></i>
+          </Transition>
+        </span>
+        <p class="mt-2">{{ recipe.likes }} likes</p>
+      </div>
+      <div class="column">
+        <span> <i class="fa-regular fa-comment fa-2xl"></i></span>
+      </div>
+    </div>
     <footer v-if="userStore.user.id === recipe.user_id" class="card-footer">
       <EditRecipeButtonRouter :recipe-id="recipe.id" />
-      <a @click.prevent="deleteRecipe = true" href="#" class="card-footer-item">Delete</a>
+      <a @click.prevent="deleteRecipe = true" class="card-footer-item"
+        >Delete</a
+      >
     </footer>
-    <ModalDeleteRecipe v-if="deleteRecipe" v-model="deleteRecipe" :recipe-id="recipe.id" />
+    <ModalDeleteRecipe
+      v-if="deleteRecipe"
+      v-model="deleteRecipe"
+      :recipe-id="recipe.id"
+    />
   </div>
 </template>
 
@@ -71,7 +91,7 @@ import { useUserStore } from "@/stores/storeAuth";
 export default {
   components: {
     EditRecipeButtonRouter,
-    ModalDeleteRecipe
+    ModalDeleteRecipe,
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -82,10 +102,22 @@ export default {
     return {
       recipeId: this.$route.params.id,
       recipe: {},
-      deleteRecipe: false
+      deleteRecipe: false,
     };
   },
-  methods: {},
+  computed: {
+    hasUserLiked() {
+      return this.recipe.likedBy.find((x) => x === this.userStore.user.email);
+    },
+  },
+  methods: {
+    async likeRecipe() {
+      this.recipe = await this.recipeStore.likeRecipe(
+        this.recipeId,
+        this.userStore.user.email
+      );
+    },
+  },
   created() {
     this.recipe = this.recipeStore.getRecipeById(this.recipeId);
   },
@@ -94,5 +126,14 @@ export default {
 <style scoped>
 .enable-line-break {
   white-space: pre-wrap;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

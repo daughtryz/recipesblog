@@ -103,7 +103,8 @@ export const useRecipeStore = defineStore("recipeStore", {
             notes: doc.data().notes,
             likes: doc.data().likes,
             image: doc.data().image,
-            user_id: doc.data().user_id
+            user_id: doc.data().user_id,
+            likedBy: doc.data().likedBy,
           };
           currentRecipes.push(recipe);
         });
@@ -132,7 +133,26 @@ export const useRecipeStore = defineStore("recipeStore", {
       currentRecipe.notes = recipeToEdit.notes;
       currentRecipe.image = recipeToEdit.image;
 
-      await updateDoc(doc(recipesCollectionRef, recipeToEdit.id), currentRecipe);
+      await updateDoc(
+        doc(recipesCollectionRef, recipeToEdit.id),
+        currentRecipe
+      );
+    },
+    async likeRecipe(recipeId, userEmail) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
+      const user = currentRecipe.likedBy.find((x) => x === userEmail);
+
+      if (user) {
+        currentRecipe.likes -= 1;
+        currentRecipe.likedBy.shift(userEmail);
+      } else {
+        currentRecipe.likes += 1;
+        currentRecipe.likedBy.push(userEmail);
+      }
+
+      await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
+
+      return currentRecipe;
     },
     async deleteRecipe(recipeId) {
       await deleteDoc(doc(recipesCollectionRef, recipeId));
