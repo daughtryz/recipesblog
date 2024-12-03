@@ -178,6 +178,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, between, minValue, helpers } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
 import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
+import { useUserStore } from "@/stores/storeAuth";
 
 const isIngredientsNotEmpty = helpers.withMessage(
   "Ingredients must have at least one value",
@@ -205,9 +206,11 @@ export default {
   },
   setup() {
     const recipeStore = useRecipeStore();
+    const userStore = useUserStore();
 
     return {
       recipeStore,
+      userStore,
       v$: useVuelidate(),
     };
   },
@@ -256,9 +259,10 @@ export default {
         directions: this.directions,
         notes: this.notes,
         image: this.image,
+        user_id: this.userStore.user.id,
         likes: 0,
       };
-      
+
       await this.recipeStore.addRecipe(recipe);
       this.$router.push("/");
     },

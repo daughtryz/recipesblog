@@ -55,7 +55,7 @@
         {{ recipe.notes }}
       </div>
     </div>
-    <footer class="card-footer">
+    <footer v-if="userStore.user.id === recipe.user_id" class="card-footer">
       <EditRecipeButtonRouter :recipe-id="recipe.id" />
       <a @click.prevent="deleteRecipe = true" href="#" class="card-footer-item">Delete</a>
     </footer>
@@ -67,7 +67,7 @@
 import { useRecipeStore } from "@/stores/storeRecipe";
 import EditRecipeButtonRouter from "@/components/recipes/EditRecipeButtonRouter.vue";
 import ModalDeleteRecipe from "@/components/recipes/ModalDeleteRecipe.vue";
-
+import { useUserStore } from "@/stores/storeAuth";
 export default {
   components: {
     EditRecipeButtonRouter,
@@ -75,7 +75,8 @@ export default {
   },
   setup() {
     const recipeStore = useRecipeStore();
-    return { recipeStore };
+    const userStore = useUserStore();
+    return { recipeStore, userStore };
   },
   data() {
     return {

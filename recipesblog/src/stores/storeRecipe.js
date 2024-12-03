@@ -103,6 +103,7 @@ export const useRecipeStore = defineStore("recipeStore", {
             notes: doc.data().notes,
             likes: doc.data().likes,
             image: doc.data().image,
+            user_id: doc.data().user_id
           };
           currentRecipes.push(recipe);
         });
@@ -117,7 +118,7 @@ export const useRecipeStore = defineStore("recipeStore", {
       let createdAt = currentDate.toString();
       recipe.createdAt = createdAt;
 
-      await setDoc(collection(recipesCollectionRef, recipe.id), recipe);
+      await setDoc(doc(recipesCollectionRef, recipe.id), recipe);
     },
     async editRecipe(recipeToEdit) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeToEdit.id);
