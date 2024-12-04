@@ -57,8 +57,8 @@
                 <option selected disabled hidden value="">
                   Choose category
                 </option>
-                <option v-for="category in categories">
-                  {{ category }}
+                <option v-for="category in categoryStore.categories">
+                  {{ category.name }}
                 </option>
               </select>
               <div
@@ -119,7 +119,10 @@
         <div class="columns">
           <div class="content column">
             <div class="fixed-grid has-1-cols">
-              <div v-for="direction of recipeToEdit.directions" class="cell mb-3">
+              <div
+                v-for="direction of recipeToEdit.directions"
+                class="cell mb-3"
+              >
                 <span>
                   <i class="fa-solid fa-check"></i>
                 </span>
@@ -180,6 +183,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, between, minValue, helpers } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
 import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
+import { useCategoryStore } from "@/stores/storeCategory";
 
 const isIngredientsNotEmpty = helpers.withMessage(
   "Ingredients must have at least one value",
@@ -191,14 +195,6 @@ const isDirectionsNotEmpty = helpers.withMessage(
   (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
 );
 
-const categories = [
-  "Salads",
-  "Main course",
-  "Bakery",
-  "Soups",
-  "Desserts",
-  "Drinks",
-];
 export default {
   components: {
     RecipeInputField,
@@ -206,15 +202,16 @@ export default {
   },
   setup() {
     const recipeStore = useRecipeStore();
+    const categoryStore = useCategoryStore();
 
     return {
       recipeStore,
+      categoryStore,
       v$: useVuelidate(),
     };
   },
   data() {
     return {
-      categories,
       isEditMode: false,
       recipeToEdit: {
         name: "",

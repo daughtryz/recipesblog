@@ -57,8 +57,8 @@
                 <option selected disabled hidden value="">
                   Choose a category
                 </option>
-                <option v-for="category in categories">
-                  {{ category }}
+                <option v-for="category in categoryStore.categories">
+                  {{ category.name }}
                 </option>
               </select>
               <div
@@ -179,6 +179,7 @@ import { required, between, minValue, helpers } from "@vuelidate/validators";
 import RecipeInputField from "@/components/recipes/RecipeInputField.vue";
 import AddEditRecipeButton from "@/components/recipes/AddEditRecipeButton.vue";
 import { useUserStore } from "@/stores/storeAuth";
+import { useCategoryStore } from "@/stores/storeCategory";
 
 const isIngredientsNotEmpty = helpers.withMessage(
   "Ingredients must have at least one value",
@@ -190,15 +191,6 @@ const isDirectionsNotEmpty = helpers.withMessage(
   (value) => Array.isArray(value) && value.some((item) => item.trim() !== "") // Check if there's at least one non-empty item
 );
 
-const categories = [
-  "Salads",
-  "Main course",
-  "Bakery",
-  "Soups",
-  "Desserts",
-  "Drinks",
-];
-
 export default {
   components: {
     RecipeInputField,
@@ -207,16 +199,17 @@ export default {
   setup() {
     const recipeStore = useRecipeStore();
     const userStore = useUserStore();
+    const categoryStore = useCategoryStore();
 
     return {
       recipeStore,
       userStore,
+      categoryStore,
       v$: useVuelidate(),
     };
   },
   data() {
     return {
-      categories,
       name: "",
       servings: 0,
       hours: 0,
@@ -261,7 +254,7 @@ export default {
         image: this.image,
         user_id: this.userStore.user.id,
         likes: 0,
-        likedBy: []
+        likedBy: [],
       };
 
       await this.recipeStore.addRecipe(recipe);
