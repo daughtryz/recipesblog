@@ -3,7 +3,15 @@
   <CategoryTabs v-on:select-category-name="onSelectCategoryNameHandler" />
   <div class="grid">
     <div class="cell">
-      <SearchBar v-model="recipeName" />
+      <SearchBar v-model="recipeName">
+        <template #searchButton>
+          <div class="control">
+            <button @click="filterRecipeByName" class="button is-success">
+              Search
+            </button>
+          </div>
+        </template>
+      </SearchBar>
     </div>
     <div class="cell">
       <AddRecipeButton />
@@ -12,7 +20,7 @@
   <div class="fixed-grid has-3-cols">
     <div class="grid is-gap-5">
       <div
-        v-for="recipe in filteredRecipesByName"
+        v-for="recipe in filteredRecipesByNameOrCategory"
         :key="recipe.name"
         class="cell"
       >
@@ -53,23 +61,34 @@ export default {
     onSelectCategoryNameHandler(selectedCategoryName) {
       this.selectedCategoryName = selectedCategoryName;
     },
+    filterRecipeByName() {
+      this.recipeStore.getRecipeByName(this.recipeName);
+      console.log("filtered");
+    },
   },
   computed: {
-    filteredRecipesByName() {
+    async filteredRecipesByNameOrCategory() {
+      if (
+        this.selectedCategoryName != ""
+      ) {
+        console.log('in the first  if');
+        return await this.recipeStore.getRecipeByCategory(this.selectedCategoryName);
+      }
+      console.log('in the second  if')
       return this.recipeStore.recipes.filter((recipe) => {
         const matchesName = recipe.name
           .toLowerCase()
           .includes(this.recipeName.toLowerCase());
 
-        if (this.selectedCategoryName === "All") {
-          this.selectedCategoryName = "";
-        }
+        // if (this.selectedCategoryName === "All") {
+        //   this.selectedCategoryName = "";
+        // }
 
-        const matchesCategory =
-          this.selectedCategoryName === "" ||
-          recipe.category === this.selectedCategoryName;
+        // const matchesCategory =
+        //   this.selectedCategoryName === "" ||
+        //   recipe.category === this.selectedCategoryName;
 
-        return matchesName && matchesCategory;
+        return matchesName;
       });
     },
   },
