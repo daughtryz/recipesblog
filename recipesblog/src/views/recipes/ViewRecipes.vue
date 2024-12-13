@@ -44,7 +44,6 @@ export default {
   },
   data() {
     return {
-      recipes: [],
       recipeName: "",
       selectedCategoryName: "",
     };

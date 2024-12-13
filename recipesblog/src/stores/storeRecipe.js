@@ -75,7 +75,6 @@ export const useRecipeStore = defineStore("recipeStore", {
         };
         currentRecipes.push(recipe);
       });
-      console.log(currentRecipes);
       this.recipes = currentRecipes;
     },
     getRecipeById(recipeId) {
