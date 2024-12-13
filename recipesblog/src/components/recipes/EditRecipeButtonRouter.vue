@@ -1,5 +1,5 @@
 <template>
-  <a @click.prevent="routeToEditRecipeView" class="card-footer-item">Edit</a>
+  <button @click="routeToEditRecipeView" class="button is-primary">Edit</button>
 </template>
 
 <script>

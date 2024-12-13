@@ -1,85 +1,126 @@
 <template>
-  <div class="card mt-5">
-    <div class="grid ml-5 pt-6">
-      <div class="cell">
-        <img
-          width="200"
-          height="200"
-          :src="recipe.image"
-          alt="Placeholder image"
-        />
-      </div>
-      <div class="cell is-family-monospace">
-        <h1 class="title is-1">{{ recipe.name }}</h1>
-
-        <div class="cell">
-          <p>{{ recipe.servings }} serving</p>
+  <div class="section">
+    <div class="container">
+      <!-- Recipe Card -->
+      <div class="card">
+        <!-- Recipe Image -->
+        <div class="card-image">
+          <figure class="image is-2by1">
+            <img :src="recipe.image" :alt="recipe.name" />
+          </figure>
         </div>
-      </div>
-      <div class="cell">
-        <div class="content">
-          <h4>
-            <span class="icon">
-              <i class="fas fa-clock"></i>
-            </span>
-            {{ recipe.hours }} hours {{ recipe.minutes }} minutes
-          </h4>
-        </div>
-      </div>
 
-      <div class="cell is-row-start-2">
-        <div class="columns">
-          <div class="content column">
-            <h2>Ingredients</h2>
-            <div class="fixed-grid has-1-cols">
-              <div v-for="ingredient of recipe.ingredients" class="cell mb-3">
-                <span>
-                  <i class="fa-solid fa-check"></i>
-                </span>
-                <em>{{ ingredient }}</em>
-              </div>
+        <!-- Recipe Content -->
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <!-- Title and Time -->
+              <p class="title is-4">{{ recipe.title }}</p>
+              <p class="subtitle is-6">
+                ⏱️ {{ recipe.hours }} : {{ recipe.minutes }} | 🍽️
+                {{ recipe.servings }} servings
+              </p>
             </div>
           </div>
-          <div class="content column">
-            <h2>Directions</h2>
-            <ul v-for="direction of recipe.directions">
-              <li>{{ direction }}</li>
-            </ul>
+
+          <!-- Ingredients and Directions -->
+          <div class="columns">
+            <!-- Ingredients -->
+            <div class="column is-half">
+              <table class="ml-5 table is-bordered">
+                <thead>
+                  <tr>
+                    <th class="is-success">Ingredients</th>
+                  </tr>
+                </thead>
+                <tbody
+                  v-for="ingredient in recipe.ingredients"
+                  :key="ingredient"
+                >
+                  <tr>
+                    <td>
+                      <i class="fa-solid fa-check"></i>
+                      {{ ingredient }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Directions -->
+            <div class="column is-half">
+              <table class="ml-8 table is-bordered">
+                <thead>
+                  <tr>
+                    <th class="is-success">Directions</th>
+                  </tr>
+                </thead>
+                <tbody v-for="direction in recipe.directions" :key="direction">
+                  <tr>
+                    <td>
+                      <i class="fa-solid fa-check"></i>
+                      {{ direction }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          <!-- Notes -->
+          <article class="message is-success">
+            <div class="message-header">
+              <p>Notes</p>
+            </div>
+            <div class="message-body">
+              {{ recipe.notes }}
+            </div>
+          </article>
         </div>
+
+        <!-- Footer -->
+        <footer class="card-footer">
+          <span class="card-footer-item">
+            <button @click="likeRecipe(recipeId)" class="button">
+              <span class="icon">
+                <Transition mode="out-in">
+                  <i v-if="hasUserLiked" class="fa-solid fa-thumbs-up fa"></i>
+                  <i v-else class="fa-regular fa-thumbs-up fa"></i>
+                </Transition>
+              </span>
+              <span>{{ recipe.likes }} Likes</span>
+            </button>
+          </span>
+          <span class="card-footer-item">
+            <button class="button">
+              <span class="icon">
+                <i class="fas fa-comment"></i>
+              </span>
+              <span>Comment</span>
+            </button>
+          </span>
+          <span
+            v-if="userStore.user.id === recipe.user_id"
+            class="card-footer-item"
+          >
+            <EditRecipeButtonRouter :recipe-id="recipe.id" />
+          </span>
+          <span
+            v-if="userStore.user.id === recipe.user_id"
+            class="card-footer-item"
+          >
+            <button @click="deleteRecipe = true" class="button is-danger">
+              Delete
+            </button>
+          </span>
+        </footer>
+        <ModalDeleteRecipe
+          v-if="deleteRecipe"
+          v-model="deleteRecipe"
+          :recipe-id="recipe.id"
+        />
       </div>
     </div>
-    <div class="card-content">
-      <div class="content">
-        <h1>Notes</h1>
-        {{ recipe.notes }}
-      </div>
-    </div>
-    <div class="ml-3 mt-4 columns is-8">
-      <div class="column is-2">
-        <span @click="likeRecipe(recipeId)">
-          <Transition mode="out-in">
-            <i v-if="hasUserLiked" class="fa-solid fa-thumbs-up fa-2xl"></i>
-            <i v-else class="fa-regular fa-thumbs-up fa-2xl"></i>
-          </Transition>
-        </span>
-        <p class="mt-2">{{ recipe.likes }} likes</p>
-      </div>
-      <div class="column">
-        <span> <i class="fa-regular fa-comment fa-2xl"></i></span>
-      </div>
-    </div>
-    <footer v-if="userStore.user.id === recipe.user_id" class="card-footer">
-      <EditRecipeButtonRouter :recipe-id="recipe.id" />
-      <a @click.prevent="deleteRecipe = true" class="card-footer-item"
-        >Delete</a
-      >
-    </footer>
-    <ModalDeleteRecipe
-      v-if="deleteRecipe"
-      v-model="deleteRecipe"
-      :recipe-id="recipe.id"
-    />
   </div>
 </template>
 
@@ -135,5 +176,18 @@ export default {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.card-content ul li,
+.card-content ol li {
+  margin: 0.5em 0;
+}
+
+.card-footer-item .button {
+  display: flex;
+  align-items: center;
+}
+
+.card-footer-item .button .icon {
+  margin-right: 5px;
 }
 </style>
