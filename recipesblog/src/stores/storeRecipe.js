@@ -45,56 +45,38 @@ export const useRecipeStore = defineStore("recipeStore", {
         this.recipes = currentRecipes;
       });
     },
-    // async getRecipeByName(name) {
-    //   const q = query(recipesCollectionRef, where("name", "<=", name))
-    //   const querySnapshot = await getDocs(q);
-    //   let currentRecipes = [];
-    //     querySnapshot.forEach((doc) => {
-    //       let recipe = {
-    //         id: doc.id,
-    //         name: doc.data().name,
-    //         servings: doc.data().servings,
-    //         hours: doc.data().hours,
-    //         minutes: doc.data().minutes,
-    //         category: doc.data().category,
-    //         ingredients: doc.data().ingredients,
-    //         directions: doc.data().directions,
-    //         notes: doc.data().notes,
-    //         likes: doc.data().likes,
-    //         image: doc.data().image,
-    //         user_id: doc.data().user_id,
-    //         likedBy: doc.data().likedBy,
-    //       };
-    //       currentRecipes.push(recipe);
-    //     });
-    //     console.log('Current filtered recipes by name are:');
-    //     console.log(currentRecipes);
-    //     this.recipes = currentRecipes;
-    // },
+    async getRecipeByName(name) {
+      this.recipes = this.recipes.filter((recipe) => {
+        const matchesName = recipe.name
+          .toLowerCase()
+          .includes(name.toLowerCase());
+        return matchesName;
+      });
+    },
     async getRecipeByCategory(category) {
-      const q = query(recipesCollectionRef, where("category", "==", category))
+      const q = query(recipesCollectionRef, where("category", "==", category));
       const querySnapshot = await getDocs(q);
       let currentRecipes = [];
-        querySnapshot.forEach((doc) => {
-          let recipe = {
-            id: doc.id,
-            name: doc.data().name,
-            servings: doc.data().servings,
-            hours: doc.data().hours,
-            minutes: doc.data().minutes,
-            category: doc.data().category,
-            ingredients: doc.data().ingredients,
-            directions: doc.data().directions,
-            notes: doc.data().notes,
-            likes: doc.data().likes,
-            image: doc.data().image,
-            user_id: doc.data().user_id,
-            likedBy: doc.data().likedBy,
-          };
-          currentRecipes.push(recipe);
-        });
-        console.log(currentRecipes)
-        return currentRecipes;
+      querySnapshot.forEach((doc) => {
+        let recipe = {
+          id: doc.id,
+          name: doc.data().name,
+          servings: doc.data().servings,
+          hours: doc.data().hours,
+          minutes: doc.data().minutes,
+          category: doc.data().category,
+          ingredients: doc.data().ingredients,
+          directions: doc.data().directions,
+          notes: doc.data().notes,
+          likes: doc.data().likes,
+          image: doc.data().image,
+          user_id: doc.data().user_id,
+          likedBy: doc.data().likedBy,
+        };
+        currentRecipes.push(recipe);
+      });
+      console.log(currentRecipes);
+      this.recipes = currentRecipes;
     },
     getRecipeById(recipeId) {
       return this.recipes.find((x) => x.id == recipeId);
@@ -106,9 +88,7 @@ export const useRecipeStore = defineStore("recipeStore", {
 
       await setDoc(doc(recipesCollectionRef, recipe.id), recipe);
     },
-    loadQuerySnapshot(querySnapshot) {
-
-    },
+    loadQuerySnapshot(querySnapshot) {},
     async editRecipe(recipeToEdit) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeToEdit.id);
       currentRecipe.name = recipeToEdit.name;

@@ -3,15 +3,7 @@
   <CategoryTabs v-on:select-category-name="onSelectCategoryNameHandler" />
   <div class="grid">
     <div class="cell">
-      <SearchBar v-model="recipeName">
-        <template #searchButton>
-          <div class="control">
-            <button @click="filterRecipeByName" class="button is-success">
-              Search
-            </button>
-          </div>
-        </template>
-      </SearchBar>
+      <SearchBar v-model="recipeName" />
     </div>
     <div class="cell">
       <AddRecipeButton />
@@ -20,7 +12,7 @@
   <div class="fixed-grid has-3-cols">
     <div class="grid is-gap-5">
       <div
-        v-for="recipe in filteredRecipesByNameOrCategory"
+        v-for="recipe in this.recipeStore.recipes"
         :key="recipe.name"
         class="cell"
       >
@@ -61,36 +53,21 @@ export default {
     onSelectCategoryNameHandler(selectedCategoryName) {
       this.selectedCategoryName = selectedCategoryName;
     },
-    filterRecipeByName() {
-      this.recipeStore.getRecipeByName(this.recipeName);
-      console.log("filtered");
+  },
+  watch: {
+    async selectedCategoryName(category) {
+      category !== ""
+        ? await this.recipeStore.getRecipeByCategory(category)
+        : await this.recipeStore.getRecipes();
+    },
+    async recipeName(name) {
+      name !== ""
+        ? this.recipeStore.getRecipeByName(name)
+        : await this.recipeStore.getRecipes();
     },
   },
-  computed: {
-    async filteredRecipesByNameOrCategory() {
-      if (
-        this.selectedCategoryName != ""
-      ) {
-        console.log('in the first  if');
-        return await this.recipeStore.getRecipeByCategory(this.selectedCategoryName);
-      }
-      console.log('in the second  if')
-      return this.recipeStore.recipes.filter((recipe) => {
-        const matchesName = recipe.name
-          .toLowerCase()
-          .includes(this.recipeName.toLowerCase());
-
-        // if (this.selectedCategoryName === "All") {
-        //   this.selectedCategoryName = "";
-        // }
-
-        // const matchesCategory =
-        //   this.selectedCategoryName === "" ||
-        //   recipe.category === this.selectedCategoryName;
-
-        return matchesName;
-      });
-    },
+  async created() {
+    await this.recipeStore.getRecipes();
   },
 };
 </script>
