@@ -1,6 +1,7 @@
 <template>
   <button @click="routeToAddRecipeView" class="button is-primary is-rounded">
-    Add recipe
+    <i class="fa-solid fa-plus"></i>
+     Add recipe
   </button>
 </template>
 
