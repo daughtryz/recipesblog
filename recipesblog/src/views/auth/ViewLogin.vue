@@ -44,6 +44,12 @@
                 </label>
               </div>
               <div class="field">
+                <p>
+                  If you don't have an account, you can sign up from
+                  <RouterLink to="/auth/register">here</RouterLink>
+                </p>
+              </div>
+              <div class="field">
                 <button type="submit" class="button is-success">Login</button>
               </div>
             </form>

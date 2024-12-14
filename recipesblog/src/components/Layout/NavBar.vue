@@ -80,10 +80,10 @@ export default {
   },
   methods: {
     routeToRegisterPage() {
-      this.$router.push("auth/register");
+      this.$router.push({name: 'registerPage'});
     },
     routeToLoginPage() {
-      this.$router.push("auth/login");
+      this.$router.push({name: 'loginPage'});
     },
     logout() {
       this.userStore.logout();

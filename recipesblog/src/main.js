@@ -15,8 +15,14 @@ app.use(pinia);
 
 const userStore = useUserStore();
 router.beforeEach((to, from) => {
-  if (!userStore.user.id && to.name !== "loginPage") {
-    return { name: "loginPage" };
+  if (
+    !userStore.user.id &&
+    to.name !== "loginPage" &&
+    to.name !== "registerPage"
+  ) {
+    return to.name === "registerPage"
+      ? { name: "registerPage" }
+      : { name: "loginPage" };
   }
 });
 
