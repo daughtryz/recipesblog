@@ -16,6 +16,7 @@ export const useCategoryStore = defineStore("categoryStore", {
         let category = {
           id: doc.id,
           name: doc.data().name,
+          image: doc.data().image
         };
         currentCategories.push(category);
       });
