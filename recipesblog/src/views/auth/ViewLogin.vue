@@ -37,6 +37,12 @@
                   <ErrorMessages :errors="v$.password.$errors" />
                 </div>
               </div>
+              <p
+                class="invalid-credentials"
+                v-if="this.userStore.invalidCredentials"
+              >
+                {{ this.userStore.invalidCredentials }}
+              </p>
               <div class="field">
                 <label for="" class="checkbox">
                   <input type="checkbox" />
@@ -117,3 +123,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.invalid-credentials {
+  color: red;
+}
+</style>

@@ -10,6 +10,7 @@ import { auth } from "@/js/firebase";
 export const useUserStore = defineStore("userStore", {
   state: () => ({
     user: {},
+    invalidCredentials: "",
   }),
   actions: {
     init() {
@@ -44,18 +45,17 @@ export const useUserStore = defineStore("userStore", {
       signInWithEmailAndPassword(auth, credentials.email, credentials.password)
         .then((userCredential) => {
           console.log("Successfully signed in");
-          const user = userCredential.user;
-          // ...
+          this.invalidCredentials = "";
         })
         .catch((error) => {
-          console.log("Error message: ", error.message);
+          if (error.message.includes("auth/invalid-credential")) {
+            this.invalidCredentials = "Invalid username/password";
+          }
         });
     },
     logout() {
       signOut(auth)
-        .then(() => {
-
-        })
+        .then(() => {})
         .catch((error) => {
           console.log(error.message);
         });
