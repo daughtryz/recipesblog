@@ -39,6 +39,7 @@ export const useRecipeStore = defineStore("recipeStore", {
             image: doc.data().image,
             user_id: doc.data().user_id,
             likedBy: doc.data().likedBy,
+            comments: doc.data().comments,
           };
           currentRecipes.push(recipe);
         });
@@ -120,6 +121,12 @@ export const useRecipeStore = defineStore("recipeStore", {
       await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
 
       return currentRecipe;
+    },
+    async addComment(recipeId, comment) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
+      currentRecipe.comments.push(comment);
+
+      await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
     },
     async deleteRecipe(recipeId) {
       await deleteDoc(doc(recipesCollectionRef, recipeId));

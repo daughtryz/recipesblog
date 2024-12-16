@@ -92,7 +92,7 @@
             </button>
           </span>
           <span class="card-footer-item">
-            <button class="button">
+            <button @click="isCommentSectionOpened = true" class="button">
               <span class="icon">
                 <i class="fas fa-comment"></i>
               </span>
@@ -119,6 +119,12 @@
           v-model="deleteRecipe"
           :recipe-id="recipe.id"
         />
+
+        <ModalCommentSection
+          v-if="isCommentSectionOpened"
+          :recipe-id="recipeId"
+          v-model="isCommentSectionOpened"
+        />
       </div>
     </div>
   </div>
@@ -129,10 +135,13 @@ import { useRecipeStore } from "@/stores/storeRecipe";
 import EditRecipeButtonRouter from "@/components/recipes/EditRecipeButtonRouter.vue";
 import ModalDeleteRecipe from "@/components/recipes/ModalDeleteRecipe.vue";
 import { useUserStore } from "@/stores/storeAuth";
+import ModalCommentSection from "@/components/recipes/ModalCommentSection.vue";
+
 export default {
   components: {
     EditRecipeButtonRouter,
     ModalDeleteRecipe,
+    ModalCommentSection,
   },
   setup() {
     const recipeStore = useRecipeStore();
@@ -144,6 +153,7 @@ export default {
       recipeId: this.$route.params.id,
       recipe: {},
       deleteRecipe: false,
+      isCommentSectionOpened: false,
     };
   },
   computed: {
