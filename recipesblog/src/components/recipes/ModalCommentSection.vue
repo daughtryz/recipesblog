@@ -4,9 +4,7 @@
     <div class="modal-content">
       <div class="card tweet-card">
         <div class="card-content">
-          <!-- List of all comments component -->
           <Comments :recipe-id="recipeId" />
-          <!-- Post comment component -->
           <form ref="addCommentForm" @submit.prevent="onSubmit">
             <AddComment v-model="content">
               <template #errors>
@@ -86,7 +84,7 @@ export default {
         likes: 0,
         userImageUrl: this.defaultUserImage,
       };
-      
+
       this.$refs.addCommentForm.reset();
       await this.recipeStore.addComment(this.recipeId, comment);
     },
