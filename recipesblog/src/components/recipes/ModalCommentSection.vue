@@ -7,7 +7,7 @@
           <!-- List of all comments component -->
           <Comments :recipe-id="recipeId" />
           <!-- Post comment component -->
-          <form @submit.prevent="onSubmit">
+          <form ref="addCommentForm" @submit.prevent="onSubmit">
             <AddComment v-model="content">
               <template #errors>
                 <ErrorMessages :errors="v$.content.$errors" />
@@ -86,9 +86,9 @@ export default {
         likes: 0,
         userImageUrl: this.defaultUserImage,
       };
-
+      
+      this.$refs.addCommentForm.reset();
       await this.recipeStore.addComment(this.recipeId, comment);
-      this.content = "";
     },
     getCurrentTimeISO() {
       const now = new Date();
