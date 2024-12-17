@@ -253,6 +253,7 @@ export default {
         notes: this.notes,
         image: this.image,
         user_id: this.userStore.user.id,
+        comments: [],
         likes: 0,
         likedBy: [],
       };
