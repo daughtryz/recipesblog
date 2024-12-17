@@ -9,12 +9,19 @@
       <div class="content">
         <template v-if="comment.isEditable">
           <form @submit.prevent="onEditSubmit(comment)">
-            <EditComment
-              v-model:content="comment.content"
-              v-model:is-editable="comment.isEditable"
-            >
+            <EditComment v-model:content="comment.content">
               <template #errors>
                 <ErrorMessages :errors="v$.selectedComment.content.$errors" />
+              </template>
+              <template #buttons>
+                <p class="control">
+                  <button type="submit" class="button is-success mr-3">
+                    Save comment
+                  </button>
+                  <button class="button is-danger" @click="cancelEdit(comment)">
+                    Cancel
+                  </button>
+                </p>
               </template>
             </EditComment>
           </form>
@@ -114,7 +121,7 @@ export default {
     EditComment,
     ErrorMessages,
   },
-  props: ["recipeId"],
+  props: ["comments", "recipeId"],
   setup() {
     const recipeStore = useRecipeStore();
 
@@ -125,7 +132,6 @@ export default {
   },
   data() {
     return {
-      comments: [],
       selectedComment: {
         content: "",
       },
@@ -160,13 +166,13 @@ export default {
         postTime
       );
 
+      comment.cachedComment = comment.content;
       comment.isEditable = false;
     },
-  },
-  created() {
-    this.comments = this.recipeStore
-      .getRecipeById(this.recipeId)
-      .comments.map((obj) => ({ ...obj, isEditable: false }));
+    cancelEdit(comment) {
+      comment.content = comment.cachedComment;
+      comment.isEditable = false;
+    },
   },
 };
 </script>

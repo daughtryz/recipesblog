@@ -11,21 +11,13 @@
     <slot name="errors" />
   </div>
   <div class="field">
-    <p class="control">
-      <button class="button is-success mr-3">Save comment</button>
-      <button
-        class="button is-danger"
-        @click="$emit('update:isEditable', false)"
-      >
-        Cancel
-      </button>
-    </p>
+    <slot name="buttons" />
   </div>
 </template>
 
 <script>
 export default {
-  props: ["content", "isEditable"],
-  emits: ["update:content", "update:isEditable"],
+  props: ["content"],
+  emits: ["update:content"],
 };
 </script>

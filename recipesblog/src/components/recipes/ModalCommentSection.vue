@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="card tweet-card">
         <div class="card-content">
-          <Comments :recipe-id="recipeId" />
+          <Comments :recipe-id="recipeId" :comments="comments" />
           <form ref="addCommentForm" @submit.prevent="onSubmit">
             <AddComment v-model="content">
               <template #errors>
@@ -57,6 +57,7 @@ export default {
   data() {
     return {
       content: "",
+      comments: [],
       defaultUserImage,
     };
   },
@@ -85,7 +86,16 @@ export default {
 
       this.$refs.addCommentForm.reset();
       await this.recipeStore.addComment(this.recipeId, comment);
+      this.comments = this.recipeStore
+        .getRecipeById(this.recipeId)
+        .comments.map((obj) => ({ ...obj, isEditable: false }));
     },
+  },
+  created() {
+    this.comments = this.recipeStore
+      .getRecipeById(this.recipeId)
+      .comments
+      .map((obj) => ({ ...obj, isEditable: false, cachedComment: obj.content }));
   },
 };
 </script>
