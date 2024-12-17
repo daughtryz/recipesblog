@@ -7,13 +7,34 @@
     </figure>
     <div class="media-content">
       <div class="content">
-        <p>
-          <strong>{{ comment.username }}</strong>
-          <br />
-          {{ comment.content }}
-          <br />
-          <small><a>Like</a> · <a>Reply</a> · {{ comment.postTime }}</small>
-        </p>
+        <template v-if="comment.isEditable">
+          <form @submit.prevent="onEditSubmit(comment)">
+            <EditComment
+              v-model:content="comment.content"
+              v-model:is-editable="comment.isEditable"
+            >
+              <template #errors>
+                <ErrorMessages :errors="v$.selectedComment.content.$errors" />
+              </template>
+            </EditComment>
+          </form>
+        </template>
+        <template v-else>
+          <p>
+            <strong>{{ comment.username }}</strong>
+            <br />
+            {{ comment.content }}
+            <br />
+            <small><a>Like</a> · <a>Reply</a> · {{ comment.postTime }}</small>
+          </p>
+          <button
+            @click="comment.isEditable = true"
+            class="button is-small is-success mr-2"
+          >
+            Edit
+          </button>
+          <button class="button is-small is-danger">Delete</button>
+        </template>
       </div>
 
       <!-- <article class="media">
@@ -82,56 +103,70 @@
 
 <script>
 import { useRecipeStore } from "@/stores/storeRecipe";
+import EditComment from "./EditComment.vue";
+import { useCurrentTimeISO } from "@/composables/useCurrentTimeISO";
+import { useVuelidate } from "@vuelidate/core";
+import { required, helpers } from "@vuelidate/validators";
+import ErrorMessages from "../ErrorMessages.vue";
 
 export default {
+  components: {
+    EditComment,
+    ErrorMessages,
+  },
   props: ["recipeId"],
   setup() {
     const recipeStore = useRecipeStore();
 
     return {
       recipeStore,
+      v$: useVuelidate(),
     };
   },
   data() {
     return {
       comments: [],
+      selectedComment: {
+        content: "",
+      },
     };
   },
-  computed: {
-    timeSinceComment(publishedDate) {
-      console.log("timeSinceComment");
-      console.log(publishedDate);
-      const now = new Date();
-      const published = new Date(publishedDate);
-
-      // Calculate the difference in milliseconds
-      const diffMs = now - published;
-
-      // Calculate differences in various time units
-      const diffMinutes = Math.floor(diffMs / (1000 * 60));
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      const diffMonths = Math.floor(diffDays / 30); // Approximation for months
-      const diffYears = Math.floor(diffDays / 365); // Approximation for years
-
-      if (diffYears > 0) {
-        return diffYears === 1 ? "1 year ago" : `${diffYears} years ago`;
-      } else if (diffMonths > 0) {
-        return diffMonths === 1 ? "1 month ago" : `${diffMonths} months ago`;
-      } else if (diffDays > 0) {
-        return diffDays === 1 ? "1 day ago" : `${diffDays} days ago`;
-      } else if (diffHours > 0) {
-        return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`;
+  validations() {
+    return {
+      selectedComment: {
+        content: {
+          required: helpers.withMessage(
+            "Cannot post empty comments!",
+            required
+          ),
+        },
+      },
+    };
+  },
+  methods: {
+    async onEditSubmit(comment) {
+      this.selectedComment.content = comment.content;
+      if (!(await this.v$.$validate())) {
+        return;
       }
-      return diffMinutes === 1 ? "1 minute ago" : `${diffMinutes} minutes ago`;
-    },
-    publishedDate(published) {
-      console.log(published);
-      return new Date(published).toString();
+
+      const { currentISOTime } = useCurrentTimeISO();
+      let postTime = currentISOTime;
+
+      await this.recipeStore.editComment(
+        this.recipeId,
+        comment.id,
+        comment.content,
+        postTime
+      );
+
+      comment.isEditable = false;
     },
   },
   created() {
-    this.comments = this.recipeStore.getRecipeById(this.recipeId).comments;
+    this.comments = this.recipeStore
+      .getRecipeById(this.recipeId)
+      .comments.map((obj) => ({ ...obj, isEditable: false }));
   },
 };
 </script>

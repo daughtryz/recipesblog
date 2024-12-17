@@ -128,6 +128,16 @@ export const useRecipeStore = defineStore("recipeStore", {
 
       await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
     },
+    async editComment(recipeId, commentId, content, postTime) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
+      const currentComment = currentRecipe.comments.find(
+        (x) => x.id == commentId
+      );
+
+      currentComment.content = content;
+      currentComment.postTime = postTime;
+      await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
+    },
     async deleteRecipe(recipeId) {
       await deleteDoc(doc(recipesCollectionRef, recipeId));
     },

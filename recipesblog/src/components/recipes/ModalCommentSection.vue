@@ -32,6 +32,7 @@ import { useRecipeStore } from "@/stores/storeRecipe";
 import { useVuelidate } from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
 import ErrorMessages from "../ErrorMessages.vue";
+import { useCurrentTimeISO } from "@/composables/useCurrentTimeISO";
 
 const defaultUserImage =
   "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
@@ -50,7 +51,7 @@ export default {
     return {
       userStore,
       recipeStore,
-      v$: useVuelidate(),
+      v$: useVuelidate({ $scope: false }),
     };
   },
   data() {
@@ -71,15 +72,12 @@ export default {
       if (!(await this.v$.$validate())) {
         return;
       }
-
-      let postTime = this.getCurrentTimeISO();
-      console.log("in the submit");
-      console.log(this.userStore.user.email);
+      const { currentISOTime } = useCurrentTimeISO();
       const comment = {
         id: uuidv4(),
         content: this.content,
         username: this.userStore.user.email,
-        postTime,
+        postTime: currentISOTime,
         replies: [],
         likes: 0,
         userImageUrl: this.defaultUserImage,
@@ -87,18 +85,6 @@ export default {
 
       this.$refs.addCommentForm.reset();
       await this.recipeStore.addComment(this.recipeId, comment);
-    },
-    getCurrentTimeISO() {
-      const now = new Date();
-
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-      const day = String(now.getDate()).padStart(2, "0");
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const seconds = String(now.getSeconds()).padStart(2, "0");
-
-      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
     },
   },
 };
