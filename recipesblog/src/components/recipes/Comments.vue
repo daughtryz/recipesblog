@@ -40,7 +40,18 @@
           >
             Edit
           </button>
-          <button class="button is-small is-danger">Delete</button>
+          <button
+            @click="isDeleteModeEnable = true"
+            class="button is-small is-danger"
+          >
+            Delete
+          </button>
+          <ModalDeleteComment
+            v-if="isDeleteModeEnable"
+            v-model="isDeleteModeEnable"
+            :recipe-id="recipeId"
+            :comment-id="comment.id"
+          />
         </template>
       </div>
 
@@ -115,11 +126,13 @@ import { useCurrentTimeISO } from "@/composables/useCurrentTimeISO";
 import { useVuelidate } from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
 import ErrorMessages from "../ErrorMessages.vue";
+import ModalDeleteComment from "./ModalDeleteComment.vue";
 
 export default {
   components: {
     EditComment,
     ErrorMessages,
+    ModalDeleteComment,
   },
   props: ["comments", "recipeId"],
   setup() {
@@ -132,6 +145,7 @@ export default {
   },
   data() {
     return {
+      isDeleteModeEnable: false,
       selectedComment: {
         content: "",
       },
