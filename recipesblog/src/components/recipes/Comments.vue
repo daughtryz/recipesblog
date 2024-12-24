@@ -34,24 +34,16 @@
             <br />
             <small><a>Like</a> · <a>Reply</a> · {{ comment.postTime }}</small>
           </p>
-          <button
-            @click="comment.isEditable = true"
-            class="button is-small is-success mr-2"
-          >
+          <button v-if="comment.username === userStore.user.email" @click="comment.isEditable = true"
+            class="button is-small is-success mr-2">
             Edit
           </button>
-          <button
-            @click="isDeleteModeEnable = true"
-            class="button is-small is-danger"
-          >
+          <button v-if="comment.username === userStore.user.email" @click="isDeleteModeEnable = true"
+            class="button is-small is-danger">
             Delete
           </button>
-          <ModalDeleteComment
-            v-if="isDeleteModeEnable"
-            v-model="isDeleteModeEnable"
-            :recipe-id="recipeId"
-            :comment-id="comment.id"
-          />
+          <ModalDeleteComment v-if="isDeleteModeEnable" v-model="isDeleteModeEnable" :recipe-id="recipeId"
+            :comment-id="comment.id" />
         </template>
       </div>
 
@@ -127,6 +119,7 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, helpers } from "@vuelidate/validators";
 import ErrorMessages from "../ErrorMessages.vue";
 import ModalDeleteComment from "./ModalDeleteComment.vue";
+import { useUserStore } from "@/stores/storeAuth";
 
 export default {
   components: {
@@ -137,9 +130,11 @@ export default {
   props: ["comments", "recipeId"],
   setup() {
     const recipeStore = useRecipeStore();
+    const userStore = useUserStore();
 
     return {
       recipeStore,
+      userStore,
       v$: useVuelidate(),
     };
   },
