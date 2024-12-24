@@ -47,7 +47,7 @@
               Log in
             </a>
             <template v-if="userStore.user.id">
-              <button class="button">
+              <button class="button" @click="routeToUserProfile">
                 <span class="icon-text">
                   <span class="icon">
                     <i class="fa-solid fa-user"></i>
@@ -91,6 +91,9 @@ export default {
     routeToRecipePage() {
       this.$router.push("/");
     },
+    routeToUserProfile() {
+      this.$router.push("/user-profile");
+    }
   },
 };
 </script>

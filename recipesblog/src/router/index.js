@@ -30,6 +30,11 @@ const router = createRouter({
       ],
     },
     {
+      path: '/user-profile',
+      name: 'UserProfile',
+      component: () => import("../views/users/UserProfile.vue")
+    },
+    {
       path: "/auth",
       children: [
         {
