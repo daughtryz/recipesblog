@@ -1,49 +1,19 @@
 <template>
   <form @submit.prevent="onSubmit">
-    <RecipeInputField
-      type="text"
-      :errors="v$.recipeToEdit.name.$errors"
-      label-name="Recipe name"
-      v-model="recipeToEdit.name"
-      label-normalized="recipeName"
-      placeholder-name="Enter recipe name"
-    />
+    <RecipeInputField type="text" :errors="v$.recipeToEdit.name.$errors" label-name="Recipe name"
+      v-model="recipeToEdit.name" label-normalized="recipeName" placeholder-name="Enter recipe name" />
 
-    <RecipeInputField
-      type="text"
-      :errors="v$.recipeToEdit.image.$errors"
-      label-name="Image URL"
-      v-model="recipeToEdit.image"
-      label-normalized="recipeName"
-      placeholder-name="Enter image url"
-    />
+    <RecipeInputField type="text" :errors="v$.recipeToEdit.image.$errors" label-name="Image URL"
+      v-model="recipeToEdit.image" label-normalized="recipeName" placeholder-name="Enter image url" />
 
-    <RecipeInputField
-      type="number"
-      :errors="v$.recipeToEdit.servings.$errors"
-      label-name="Servings"
-      v-model="recipeToEdit.servings"
-      label-normalized="servings"
-      placeholder-name="Enter servings"
-    />
+    <RecipeInputField type="number" :errors="v$.recipeToEdit.servings.$errors" label-name="Servings"
+      v-model="recipeToEdit.servings" label-normalized="servings" placeholder-name="Enter servings" />
 
-    <RecipeInputField
-      type="number"
-      :errors="v$.recipeToEdit.hours.$errors"
-      label-name="Hours"
-      v-model="recipeToEdit.hours"
-      label-normalized="hours"
-      placeholder-name="Enter hours"
-    />
+    <RecipeInputField type="number" :errors="v$.recipeToEdit.hours.$errors" label-name="Hours"
+      v-model="recipeToEdit.hours" label-normalized="hours" placeholder-name="Enter hours" />
 
-    <RecipeInputField
-      type="number"
-      label-name="Minutes"
-      :errors="v$.recipeToEdit.minutes.$errors"
-      v-model="recipeToEdit.minutes"
-      label-normalized="minutes"
-      placeholder-name="Enter minutes"
-    />
+    <RecipeInputField type="number" label-name="Minutes" :errors="v$.recipeToEdit.minutes.$errors"
+      v-model="recipeToEdit.minutes" label-normalized="minutes" placeholder-name="Enter minutes" />
 
     <div class="field is-horizontal">
       <div class="field-label is-normal">
@@ -61,11 +31,7 @@
                   {{ category.name }}
                 </option>
               </select>
-              <div
-                class="input-errors"
-                v-for="error of v$.recipeToEdit.category.$errors"
-                :key="error.$uid"
-              >
+              <div class="input-errors" v-for="error of v$.recipeToEdit.category.$errors" :key="error.$uid">
                 <div class="error-msg">{{ error.$message }}</div>
               </div>
             </div>
@@ -74,67 +40,51 @@
       </div>
     </div>
 
-    <RecipeInputField
-      type="text"
-      :errors="v$.recipeToEdit.ingredients.$errors"
-      label-name="Ingredients"
-      v-model="recipeToEdit.currentIngredient"
-      label-normalized="ingredients"
-      placeholder-name="Enter ingredients e.g. butter, milk"
-    >
+    <RecipeInputField type="text" :errors="v$.recipeToEdit.ingredients.$errors" label-name="Ingredients"
+      v-model="recipeToEdit.currentIngredient" label-normalized="ingredients"
+      placeholder-name="Enter ingredients e.g. butter, milk">
       <template #ingredient>
         <div class="columns">
           <div class="content column">
             <div class="fixed-grid has-1-cols">
-              <div
-                v-for="ingredient of recipeToEdit.ingredients"
-                class="cell mb-3"
-              >
+              <div v-for="ingredient of recipeToEdit.ingredients" class="cell mb-3">
                 <span>
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <em>{{ ingredient }}</em>
+                <span @click.prevent="removeIngredient(ingredient)">
+                  <i class="fa-solid fa-trash fa-sm ml-1"></i>
+                </span>
               </div>
             </div>
           </div>
         </div>
-        <button
-          @click.prevent="addIngredient"
-          class="button is-primary is-small is-responsive"
-        >
+        <button @click.prevent="addIngredient" class="button is-primary is-small is-responsive">
           Add ingredient
         </button>
       </template>
     </RecipeInputField>
 
-    <RecipeInputField
-      type="text"
-      :errors="v$.recipeToEdit.directions.$errors"
-      label-name="Directions"
-      v-model="recipeToEdit.currentDirection"
-      label-normalized="directions"
-      placeholder-name="Enter directions e.g. prepare sauce pan, use hot water"
-    >
+    <RecipeInputField type="text" :errors="v$.recipeToEdit.directions.$errors" label-name="Directions"
+      v-model="recipeToEdit.currentDirection" label-normalized="directions"
+      placeholder-name="Enter directions e.g. prepare sauce pan, use hot water">
       <template #direction>
         <div class="columns">
           <div class="content column">
             <div class="fixed-grid has-1-cols">
-              <div
-                v-for="direction of recipeToEdit.directions"
-                class="cell mb-3"
-              >
+              <div v-for="direction of recipeToEdit.directions" class="cell mb-3">
                 <span>
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <em>{{ direction }}</em>
+                <span @click.prevent="removeDirection(direction)">
+                  <i class="fa-solid fa-trash fa-sm ml-1"></i>
+                </span>
               </div>
             </div>
           </div>
         </div>
-        <button
-          @click.prevent="addDirection"
-          class="button is-primary is-small is-responsive"
-        >
+        <button @click.prevent="addDirection" class="button is-primary is-small is-responsive">
           Add direction
         </button>
       </template>
@@ -147,11 +97,8 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <textarea
-              class="textarea"
-              v-model="recipeToEdit.notes"
-              placeholder="Additional quote to the recipe"
-            ></textarea>
+            <textarea class="textarea" v-model="recipeToEdit.notes"
+              placeholder="Additional quote to the recipe"></textarea>
           </div>
         </div>
       </div>
@@ -259,6 +206,12 @@ export default {
       this.recipeToEdit.directions.push(this.recipeToEdit.currentDirection);
       this.recipeToEdit.currentDirection = "";
     },
+    removeIngredient(ingredient) {
+      this.recipeToEdit.ingredients = this.recipeToEdit.ingredients.filter(ing => ing !== ingredient);
+    },
+    removeDirection(direction) {
+      this.recipeToEdit.directions = this.recipeToEdit.directions.filter(dir => dir !== direction);
+    }
   },
   created() {
     const recipeId = this.$route.params.id;

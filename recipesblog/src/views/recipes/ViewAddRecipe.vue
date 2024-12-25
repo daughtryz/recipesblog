@@ -91,6 +91,9 @@
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <em>{{ ingredient }}</em>
+                <span @click.prevent="removeIngredient(ingredient)">
+                  <i class="fa-solid fa-trash fa-sm ml-1"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -121,6 +124,9 @@
                   <i class="fa-solid fa-check"></i>
                 </span>
                 <em>{{ direction }}</em>
+                <span @click.prevent="removeDirection(direction)">
+                  <i class="fa-solid fa-trash fa-sm ml-1"></i>
+                </span>
               </div>
             </div>
           </div>
@@ -268,6 +274,12 @@ export default {
     addDirection() {
       this.directions.push(this.currentDirection);
       this.currentDirection = "";
+    },
+    removeIngredient(ingredient) {
+      this.ingredients = this.ingredients.filter(ing => ing !== ingredient);
+    },
+    removeDirection(direction) {
+      this.directions = this.directions.filter(dir => dir !== direction);
     },
   },
 };
