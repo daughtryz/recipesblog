@@ -22,7 +22,7 @@ export const useRecipeStore = defineStore("recipeStore", {
   }),
   actions: {
     async getRecipes() {
-      const unsubscribe = onSnapshot(recipesCollectionRef, (querySnapshot) => {
+      const unsubscribe = onSnapshot(getRecipesSnapshot, (querySnapshot) => {
         let currentRecipes = [];
         querySnapshot.forEach((doc) => {
           let recipe = {
@@ -153,6 +153,7 @@ export const useRecipeStore = defineStore("recipeStore", {
     },
     async init() {
       recipesCollectionRef = collection(db, "recipes");
+      getRecipesSnapshot = query(recipesCollectionRef, orderBy('createdAt', 'desc'));
       await this.getRecipes();
     },
     getRecipesByUserId(userId) {
