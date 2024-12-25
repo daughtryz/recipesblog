@@ -155,5 +155,14 @@ export const useRecipeStore = defineStore("recipeStore", {
       recipesCollectionRef = collection(db, "recipes");
       await this.getRecipes();
     },
+    getRecipesByUserId(userId) {
+      return this.recipes.filter(x => x.user_id === userId);
+    },
+    getLikedRecipesByUser(userEmail) {
+      return this.recipes.filter(recipe => recipe.likedBy.some(u => u === userEmail));
+    },
+    getCommentsByUser(userEmail) {
+      return this.recipes.filter(recipe => recipe.comments.some(comment => comment.username === userEmail));
+    }
   },
 });
