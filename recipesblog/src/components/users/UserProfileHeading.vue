@@ -19,7 +19,7 @@
                                 <i class="fas fa-upload"></i>
                             </span>
                             <span v-if="!selectedFile" class="file-label">Upload picture…</span>
-                            <button v-else @click="uploadToFirebase">Update Photo</button>
+                            <button v-else @click="uploadToCloudinary">Update Photo</button>
                         </span>
                     </label>
                 </div>
@@ -67,6 +67,7 @@ export default {
             selectedFile: null,
             previewUrl: null,
             downloadUrl: null,
+            uploadedImageUrl: null
         }
     },
     methods: {
@@ -77,36 +78,45 @@ export default {
             if (file) {
                 this.selectedFile = file;
                 this.previewUrl = URL.createObjectURL(file);
+                console.log(this.previewUrl)
             }
         },
-        async uploadToFirebase() {
-            if (!this.selectedFile)
-                return;
+        async uploadToCloudinary() {
+            if (!this.selectedFile) return;
+            console.log('in the uploadToCloudinary')
+            const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dltnbmjar/image/upload';
+            const uploadPreset = 'profile_pics'; // If unsigned, use the preset name
+
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+            formData.append('upload_preset', uploadPreset);
 
             try {
-                const storageRef = ref(storage, `profilePictures/${this.selectedFile.name}`);
-                console.log('After storage ref')
-                console.log(storageRef)
+                const response = await fetch(cloudinaryUrl, {
+                    method: 'POST',
+                    body: formData,
+                });
 
-                await uploadBytes(storageRef, this.selectedFile);
-                console.log('After upload')
-                // Get the download URL of the uploaded image
-                const downloadUrl = await getDownloadURL(storageRef);
+                if (response.ok) {
+                    const data = await response.json();
+                    this.uploadedImageUrl = data.secure_url; // The URL of the uploaded image
+                    console.log('Image uploaded successfully:', data);
 
-                // Update the user's photoURL
-                // const auth = getAuth();
-                // const user = auth.currentUser;
+                    const auth = getAuth();
+                    const user = auth.currentUser;
 
-                if (this.userStore.user) {
-                    await updateProfile(this.userStore.user, {
-                        photoURL: downloadUrl,
-                    });
+                    if (user) {
+                        await updateProfile(user, {
+                            photoURL: data.secure_url,
+                        });
 
-                    console.log('Updated photoURL:', downloadUrl);
+                        console.log('Updated photoURL:', data.secure_url);
+                    }
+                } else {
+                    console.error('Error uploading to Cloudinary:', await response.text());
                 }
             } catch (error) {
-                console.error('Error updating photoURL:', error);
-                this.successMessage = 'Error updating profile photo.';
+                console.error('Error uploading image:', error);
             }
         },
     },
