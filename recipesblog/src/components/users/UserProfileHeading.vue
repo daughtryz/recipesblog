@@ -11,17 +11,30 @@
                 <p>
                     <span class='title is-bold'>{{ userStore.user.email }}</span>
                     <br>
-                <div class="file is-primary mt-2">
+                <div v-if="!selectedFile" class="file is-primary mt-2">
                     <label class="file-label">
                         <input @change="onFileChange" class="file-input" type="file" name="resume" />
                         <span class="file-cta">
                             <span class="file-icon">
                                 <i class="fas fa-upload"></i>
                             </span>
-                            <span v-if="!selectedFile" class="file-label">Upload picture…</span>
-                            <button v-else @click="uploadToCloudinary">Update Photo</button>
+                            <span class="file-label">Change profile picture</span>
                         </span>
                     </label>
+                </div>
+                <!-- Modal -->
+                <div v-else class="modal is-active">
+                    <div class="modal-background"></div>
+                    <div class="modal-content">
+                        <p class="image is-4by3">
+                            <img :src="previewUrl" alt="User profile picture">
+                        </p>
+                    </div>
+                    <button class="modal-close is-large" @click="selectedFile = null" aria-label="close"></button>
+                    <div class="buttons mt-2">
+                        <button class="button is-success" @click="uploadToCloudinary">Upload picture</button>
+                        <button class="button" @click="selectedFile = null">Cancel</button>
+                    </div>
                 </div>
                 <br>
                 </p>
@@ -45,8 +58,6 @@
 <script>
 import { useUserStore } from '@/stores/storeAuth';
 import { useRecipeStore } from '@/stores/storeRecipe';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from "@/js/firebase";
 import { getAuth, updateProfile } from 'firebase/auth';
 
 export default {
@@ -65,7 +76,7 @@ export default {
             myLikedRecipes: 0,
             myComments: 0,
             selectedFile: null,
-            previewUrl: null,
+            previewUrl: "",
             downloadUrl: null,
             uploadedImageUrl: null
         }
@@ -73,17 +84,13 @@ export default {
     methods: {
         onFileChange(event) {
             const file = event.target.files[0];
-            console.log('on change')
-            console.log(file)
             if (file) {
                 this.selectedFile = file;
                 this.previewUrl = URL.createObjectURL(file);
-                console.log(this.previewUrl)
             }
         },
         async uploadToCloudinary() {
             if (!this.selectedFile) return;
-            console.log('in the uploadToCloudinary')
             const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dltnbmjar/image/upload';
             const uploadPreset = 'profile_pics'; // If unsigned, use the preset name
 
@@ -100,7 +107,6 @@ export default {
                 if (response.ok) {
                     const data = await response.json();
                     this.uploadedImageUrl = data.secure_url; // The URL of the uploaded image
-                    console.log('Image uploaded successfully:', data);
 
                     const auth = getAuth();
                     const user = auth.currentUser;
@@ -111,12 +117,16 @@ export default {
                         });
 
                         console.log('Updated photoURL:', data.secure_url);
+                        this.userStore.user.photoURL = data.secure_url;
                     }
                 } else {
                     console.error('Error uploading to Cloudinary:', await response.text());
                 }
             } catch (error) {
                 console.error('Error uploading image:', error);
+            } finally {
+                this.selectedFile = null;
+                this.previewUrl = "";
             }
         },
     },
