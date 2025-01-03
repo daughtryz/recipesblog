@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="card tweet-card">
         <div class="card-content">
-          <Comments :recipe-id="recipeId" :comments="comments" />
+          <Comments :recipe-id="recipeId" :comments="comments" v-on:handle-delete="handleDeleteComment" />
           <form ref="addCommentForm" @submit.prevent="onSubmit">
             <AddComment v-model="content">
               <template #errors>
@@ -81,7 +81,7 @@ export default {
         postTime: currentISOTime,
         replies: [],
         likes: 0,
-        userImageUrl: this.defaultUserImage,
+        userImageUrl: this.userStore.user.photoURL ?? this.defaultUserImage,
       };
 
       this.$refs.addCommentForm.reset();
@@ -90,6 +90,9 @@ export default {
         .getRecipeById(this.recipeId)
         .comments.map((obj) => ({ ...obj, isEditable: false }));
     },
+    handleDeleteComment(commentId) {
+      this.comments = this.comments.filter(comment => comment.id !== commentId)
+    }
   },
   created() {
     this.comments = this.recipeStore

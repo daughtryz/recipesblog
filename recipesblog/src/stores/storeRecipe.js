@@ -138,14 +138,23 @@ export const useRecipeStore = defineStore("recipeStore", {
       currentComment.postTime = postTime;
       await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
     },
-    async deleteComment(recipeId, commentId) {
+    async editCommentUserProfilePicture(username, imageUrl) {
       const currentRecipe = this.recipes.find((x) => x.id == recipeId);
-
       const currentComment = currentRecipe.comments.find(
         (x) => x.id == commentId
       );
 
-      currentRecipe.comments.shift(currentComment);
+      const commentsToEdit = this.recipes.flat()
+      .map(comment => comment.username === username ? { ...comment, userImageUrl: imageUrl } : comment)
+      .filter(comment => comment.username === username);
+
+      currentComment.content = content;
+      currentComment.postTime = postTime;
+      await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
+    },
+    async deleteComment(recipeId, commentId) {
+      const currentRecipe = this.recipes.find((x) => x.id == recipeId);
+      currentRecipe.comments = currentRecipe.comments.filter(comment => comment.id !== commentId);
       await updateDoc(doc(recipesCollectionRef, recipeId), currentRecipe);
     },
     async deleteRecipe(recipeId) {

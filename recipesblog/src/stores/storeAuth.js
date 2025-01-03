@@ -17,7 +17,6 @@ export const useUserStore = defineStore("userStore", {
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // User is signed in
-          console.log(user)
           this.user.id = user.uid;
           this.user.email = user.email;
           this.user.photoURL = user.photoURL;
@@ -43,10 +42,8 @@ export const useUserStore = defineStore("userStore", {
         });
     },
     loginUser(credentials) {
-      console.log("In the store login");
       signInWithEmailAndPassword(auth, credentials.email, credentials.password)
         .then((userCredential) => {
-          console.log("Successfully signed in");
           this.invalidCredentials = "";
         })
         .catch((error) => {

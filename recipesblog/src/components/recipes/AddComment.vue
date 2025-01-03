@@ -2,7 +2,7 @@
   <article class="media">
     <figure class="media-left">
       <p class="image is-64x64">
-        <img src="https://bulma.io/assets/images/placeholders/128x128.png" />
+        <img :src="userStore.user.photoURL ?? defaultUserImage" />
       </p>
     </figure>
     <div class="media-content">
@@ -26,8 +26,24 @@
 </template>
 
 <script>
+const defaultUserImage =
+"https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
+
+import { useUserStore } from '@/stores/storeAuth';
 export default {
   props: ["modelValue"],
   emits: ["update:modelValue"],
+  setup() {
+    const userStore = useUserStore();
+
+    return {
+      userStore
+    }
+  },
+  data() {
+    return {
+      defaultUserImage
+    }
+  }
 };
 </script>

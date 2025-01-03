@@ -34,11 +34,12 @@ export default {
     };
   },
   props: ["modelValue", "recipeId", "commentId"],
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "handleDeleteCommentId"],
   methods: {
     async deleteComment() {
       await this.recipeStore.deleteComment(this.recipeId, this.commentId);
       this.$emit("update:modelValue", false);
+      this.$emit("handleDeleteCommentId", this.commentId);
     },
   },
 };
