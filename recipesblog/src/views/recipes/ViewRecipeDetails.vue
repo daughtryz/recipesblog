@@ -33,10 +33,7 @@
                     <th class="is-success">Ingredients</th>
                   </tr>
                 </thead>
-                <tbody
-                  v-for="ingredient in recipe.ingredients"
-                  :key="ingredient"
-                >
+                <tbody v-for="ingredient in recipe.ingredients" :key="ingredient">
                   <tr>
                     <td>
                       <i class="fa-solid fa-check"></i>
@@ -81,7 +78,7 @@
         <!-- Footer -->
         <footer class="card-footer">
           <span class="card-footer-item">
-            <button @click="likeRecipe(recipeId)" class="button">
+            <button :disabled="!userStore.user.id" @click="likeRecipe(recipeId)" class="button">
               <span class="icon">
                 <Transition mode="out-in">
                   <i v-if="hasUserLiked" class="fa-solid fa-thumbs-up fa"></i>
@@ -99,32 +96,18 @@
               <span>Comment</span>
             </button>
           </span>
-          <span
-            v-if="userStore.user.id === recipe.user_id"
-            class="card-footer-item"
-          >
+          <span v-if="userStore.user.id === recipe.user_id" class="card-footer-item">
             <EditRecipeButtonRouter :recipe-id="recipe.id" />
           </span>
-          <span
-            v-if="userStore.user.id === recipe.user_id"
-            class="card-footer-item"
-          >
+          <span v-if="userStore.user.id === recipe.user_id" class="card-footer-item">
             <button @click="deleteRecipe = true" class="button is-danger">
               Delete
             </button>
           </span>
         </footer>
-        <ModalDeleteRecipe
-          v-if="deleteRecipe"
-          v-model="deleteRecipe"
-          :recipe-id="recipe.id"
-        />
+        <ModalDeleteRecipe v-if="deleteRecipe" v-model="deleteRecipe" :recipe-id="recipe.id" />
 
-        <ModalCommentSection
-          v-if="isCommentSectionOpened"
-          :recipe-id="recipeId"
-          v-model="isCommentSectionOpened"
-        />
+        <ModalCommentSection v-if="isCommentSectionOpened" :recipe-id="recipeId" v-model="isCommentSectionOpened" />
       </div>
     </div>
   </div>
@@ -178,6 +161,7 @@ export default {
 .enable-line-break {
   white-space: pre-wrap;
 }
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.5s ease;
@@ -187,6 +171,7 @@ export default {
 .v-leave-to {
   opacity: 0;
 }
+
 .card-content ul li,
 .card-content ol li {
   margin: 0.5em 0;
