@@ -5,7 +5,7 @@
     <div class="cell">
       <SearchBar v-model="recipeName" />
     </div>
-    <div class="cell">
+    <div class="cell" v-if="userStore.user.id">
       <AddRecipeButton />
     </div>
   </div>
@@ -29,6 +29,7 @@ import CategoryTabs from "@/components/categories/CategoryTabs.vue";
 import AddRecipeButton from "@/components/recipes/AddRecipeButtonRouter.vue";
 import Recipe from "@/components/recipes/Recipe.vue";
 import SearchBar from "@/components/SearchBar.vue";
+import { useUserStore } from "@/stores/storeAuth";
 import { useRecipeStore } from "@/stores/storeRecipe";
 export default {
   components: {
@@ -39,8 +40,8 @@ export default {
   },
   setup() {
     const recipeStore = useRecipeStore();
-
-    return { recipeStore };
+    const userStore = useUserStore();
+    return { recipeStore, userStore };
   },
   data() {
     return {

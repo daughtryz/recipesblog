@@ -6,6 +6,10 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth } from "@/js/firebase";
+import { getCookie, setCookie } from '../utils/cookiesUtils';
+
+const LOGIN_EXPIRATION_MINS = 30;
+const COOKIE_NAME = 'userToken';
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -20,13 +24,30 @@ export const useUserStore = defineStore("userStore", {
           this.user.id = user.uid;
           this.user.email = user.email;
           this.user.photoURL = user.photoURL;
-          this.router.push("/");
+          console.log(user)
         } else {
           // User is signed out
           this.user = {};
-          this.router.push({ name: "loginPage" });
         }
       });
+    },
+    async reAuthUser() {
+      if (this.user)
+        return false;
+
+      const persistedUserToken = getCookie(COOKIE_NAME);
+      if (!persistedUserToken)
+        return false;
+
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        this.user.id = user.uid;
+        this.user.email = user.email;
+        this.user.photoURL = user.photoURL;
+        return true;
+      }
+      return false;
     },
     registerUser(credentials) {
       createUserWithEmailAndPassword(
@@ -45,6 +66,11 @@ export const useUserStore = defineStore("userStore", {
       signInWithEmailAndPassword(auth, credentials.email, credentials.password)
         .then((userCredential) => {
           this.invalidCredentials = "";
+          setCookie(COOKIE_NAME, auth.currentUser.accessToken, LOGIN_EXPIRATION_MINS);
+          this.user.id = auth.currentUser.uid;
+          this.user.email = auth.currentUser.email;
+          this.user.photoURL = auth.currentUser.photoURL;
+          this.router.push("/");
         })
         .catch((error) => {
           if (error.message.includes("auth/invalid-credential")) {
@@ -54,7 +80,9 @@ export const useUserStore = defineStore("userStore", {
     },
     logout() {
       signOut(auth)
-        .then(() => {})
+        .then(() => {
+          this.router.push({ name: "loginPage" });
+        })
         .catch((error) => {
           console.log(error.message);
         });

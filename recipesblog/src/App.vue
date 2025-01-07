@@ -8,7 +8,6 @@
 
 <script>
 import NavBar from "./components/Layout/NavBar.vue";
-import { useUserStore } from "./stores/storeAuth";
 import { useRecipeStore } from "./stores/storeRecipe";
 import { useCategoryStore } from "./stores/storeCategory";
 import Footer from "./components/Layout/Footer.vue";
@@ -20,14 +19,12 @@ export default {
   },
   setup() {
     const storeRecipe = useRecipeStore();
-    const storeAuth = useUserStore();
     const categoryStore = useCategoryStore();
-    return { storeRecipe, storeAuth, categoryStore };
+    return { storeRecipe, categoryStore };
   },
   async created() {
     await this.storeRecipe.init();
     await this.categoryStore.init();
-    this.storeAuth.init();
   },
 };
 </script>
