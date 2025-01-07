@@ -24,10 +24,10 @@ const router = createRouter({
           component: () => import("../views/recipes/ViewEditRecipe.vue"),
           beforeEnter: async () => {
             const store = useUserStore();
-            if (!store.user) {
+            if (!store.user.id) {
               const isLogged = await store.reAuthUser();
               if (!isLogged) {
-                return { name: 'login' };
+                return { name: 'loginPage' };
               }
             }
           },
@@ -38,10 +38,10 @@ const router = createRouter({
           component: () => import("../views/recipes/ViewAddRecipe.vue"),
           beforeEnter: async () => {
             const store = useUserStore();
-            if (!store.user) {
+            if (!store.user.id) {
               const isLogged = await store.reAuthUser();
               if (!isLogged) {
-                return { name: 'login' };
+                return { name: 'loginPage' };
               }
             }
           },
@@ -54,10 +54,10 @@ const router = createRouter({
       component: () => import("../views/users/UserProfile.vue"),
       beforeEnter: async () => {
         const store = useUserStore();
-        if (!store.user) {
+        if (!store.user.id) {
           const isLogged = await store.reAuthUser();
           if (!isLogged) {
-            return { name: 'login' };
+            return { name: 'loginPage' };
           }
         }
       },
