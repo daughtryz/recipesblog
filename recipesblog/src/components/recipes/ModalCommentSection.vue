@@ -5,7 +5,7 @@
       <div class="card tweet-card">
         <div class="card-content">
           <Comments :recipe-id="recipeId" :comments="comments" v-on:handle-delete="handleDeleteComment" />
-          <form ref="addCommentForm" @submit.prevent="onSubmit">
+          <form v-if="userStore.user.id" ref="addCommentForm" @submit.prevent="onSubmit">
             <AddComment v-model="content">
               <template #errors>
                 <ErrorMessages :errors="v$.content.$errors" />
