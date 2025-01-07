@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer is-success pt-5 mt-6">
+  <footer class="footer">
     <div class="content has-text-centered">
       <p>
         <strong>Recipe App</strong>
@@ -9,4 +9,8 @@
 </template>
 
 <style scoped>
+/* Ensure the wrapper uses flexbox to manage positioning */
+.footer {
+  margin-top: auto
+}
 </style>

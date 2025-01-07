@@ -1,5 +1,4 @@
 <template>
-  <div class="navbar-item is-size-4 is-family-monospace">Recipes</div>
   <CategoryTabs v-on:select-category-name="onSelectCategoryNameHandler" />
   <div class="grid">
     <div class="cell">

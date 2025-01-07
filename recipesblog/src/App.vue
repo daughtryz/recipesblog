@@ -1,8 +1,12 @@
 <template>
   <NavBar />
-  <div class="container is-max-desktop">
-    <RouterView />
-  </div>
+  <main class="content">
+    <section class="section">
+      <div class="container is-max-desktop">
+        <RouterView />
+      </div>
+    </section>
+  </main>
   <Footer />
 </template>
 
