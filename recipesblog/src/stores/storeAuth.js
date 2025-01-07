@@ -81,6 +81,7 @@ export const useUserStore = defineStore("userStore", {
     logout() {
       signOut(auth)
         .then(() => {
+          this.user = {};
           this.router.push({ name: "loginPage" });
         })
         .catch((error) => {

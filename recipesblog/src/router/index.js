@@ -74,12 +74,6 @@ const router = createRouter({
           path: "login",
           name: "loginPage",
           component: () => import("../views/auth/ViewLogin.vue"),
-          beforeEnter: async () => {
-            const store = useUserStore();
-            if (store.user.id) {
-              return false;
-            }
-          },
         }
       ],
     },
