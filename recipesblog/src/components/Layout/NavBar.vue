@@ -26,7 +26,6 @@
         <a @click.prevent="routeToRecipePage" class="navbar-item"
           ><b>Recipes</b></a
         >
-        <a class="navbar-item"><b>Statistics</b></a>
       </div>
 
       <div class="navbar-end">
