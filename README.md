@@ -8,7 +8,6 @@ A recipe blog application for managing and sharing recipes. This project utilize
 - **Recipe Management**: Add, edit, view, and delete recipes.
 - **State Management**: Pinia is used for efficient state management across the application.
 - **Routing**: Vue Router handles seamless navigation between pages.
-- **Responsive Design**: Fully responsive design for optimal user experience on any device.
 
 ## Tech Stack
 
@@ -30,21 +29,14 @@ A recipe blog application for managing and sharing recipes. This project utilize
 - Firebase account
 
 ### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/recipe-blog.git
-   cd recipe-blog
-   ```
 
-2. Install dependencies:
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Run the development server:
+2. Run the development server:
    ```bash
    npm run dev
    ```
-
-4. Open the app in your browser at [http://localhost:3000](http://localhost:3000).
 
